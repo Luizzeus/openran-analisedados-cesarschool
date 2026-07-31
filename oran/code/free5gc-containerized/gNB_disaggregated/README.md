@@ -22,7 +22,7 @@ No `cu.yml`, `ran_node_name` / `gnb_id` / `gnb_id_bit_length` ficam no **nível 
 | 2 | `srsue configs/ue_srsue.conf` | Só com **ZMQ**; espere PHY *done* / «Attaching…». |
 | 3 | `./scripts/start-du-after-ue.sh` | Espera a porta **UL** em `configs/ue_srsue.conf` (defeito **2003**) e inicia `srsdu`. Ver [configs/ZMQ_PORTS.md](configs/ZMQ_PORTS.md). |
 
-**Logs no disco:** `gNB_desagregated/logs/cu.log`, `gNB_desagregated/logs/du.log`.
+**Logs no disco:** `gNB_disaggregated/logs/cu.log`, `gNB_disaggregated/logs/du.log`.
 
 **Variáveis de ambiente** (antes de `./scripts/up.sh`):
 
@@ -46,7 +46,7 @@ DU_CONFIG=du.yml CU_AUTO_START=1 DU_AUTO_START=1 ./scripts/up.sh
 
 **Ordem obrigatória:** **CU → srsUE → DU** (`start-du-after-ue.sh`). O **srsUE** tem de estar a correr **antes** do `srsdu`; caso contrário o ZMQ UL não estabelece e o UE fica em «Attaching…». O script verifica `pgrep srsue`.
 
-1. **Portas:** gNB_desagregated usa **2002/2003** (DL/UL) para não colidir com o monolítico **2000/2001**. Tudo tem de estar alinhado: `du-zmq-srsue.yml`, `ue_srsue.conf`, `docker-compose` (`2002:2002`), `start-du-after-ue.sh` (padrão UL **2003** para gNB_desagregated). Detalhe: [configs/ZMQ_PORTS.md](configs/ZMQ_PORTS.md).
+1. **Portas:** gNB_disaggregated usa **2002/2003** (DL/UL) para não colidir com o monolítico **2000/2001**. Tudo tem de estar alinhado: `du-zmq-srsue.yml`, `ue_srsue.conf`, `docker-compose` (`2002:2002`), `start-du-after-ue.sh` (padrão UL **2003** para gNB_disaggregated). Detalhe: [configs/ZMQ_PORTS.md](configs/ZMQ_PORTS.md).
 2. `./scripts/up.sh`
 3. `./scripts/start-cu.sh`
 4. **`srsue configs/ue_srsue.conf`** (outro terminal — **não** pare antes do passo 5)

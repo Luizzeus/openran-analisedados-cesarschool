@@ -7,12 +7,12 @@
 - Roteiro 01 concluído (**core** ativo, rede `free5gc-privnet`, assinante criado).
 - Imagem **`srsran-gnb:local`** (primeira subida pode fazer *build* longo).
 
-**Pasta do laboratório:** `gNB_open/` (não confundir com `gNB_desagregated/`).
+**Pasta do laboratório:** `gNB_open/` (não confundir com `gNB_disaggregated/`).
 
-**Importante — exclusividade com o Roteiro 03:** `gNB_open` e `gNB_desagregated` usam os **mesmos** nomes de contentores (`srsran-cu`, `srsran-du`) e os **mesmos** IPs na `free5gc-privnet` (**10.100.200.51** / **.52**). **Não** suba os dois *stacks* ao mesmo tempo. Antes deste roteiro:
+**Importante — exclusividade com o Roteiro 03:** `gNB_open` e `gNB_disaggregated` usam os **mesmos** nomes de contentores (`srsran-cu`, `srsran-du`) e os **mesmos** IPs na `free5gc-privnet` (**10.100.200.51** / **.52**). **Não** suba os dois *stacks* ao mesmo tempo. Antes deste roteiro:
 
 ```bash
-cd gNB_desagregated && ./scripts/down.sh 2>/dev/null || true
+cd gNB_disaggregated && ./scripts/down.sh 2>/dev/null || true
 ```
 
 O monolítico **`gNB_traditional`** pode permanecer ativo em paralelo se precisar comparar N2 (IDs **411** vs **412** e portas ZMQ distintas) — veja [gNB_open/configs/ZMQ_PORTS.md](../../gNB_open/configs/ZMQ_PORTS.md).
@@ -26,7 +26,7 @@ O monolítico **`gNB_traditional`** pode permanecer ativo em paralelo se precisa
 | Rede Docker | Liga |
 |-------------|------|
 | `free5gc-privnet` (externa, partilhada com o core) | CU/DU ↔ AMF (N2), NG-U (N3), F1 entre CU e DU |
-| `gnb-open-ofhnet` (criada pelo compose de `gNB_open`) | DU (`eth1`) ↔ RU emulada `srsran-ru` (`eth0`) — Open Fronthaul |
+| `gnb-open-ofhnet` (criada pelo compose de `gNB_open`) | DU (MAC `02:00:00:00:01:02`) ↔ RU emulada `srsran-ru` (MAC `02:00:00:00:01:01`) — Open Fronthaul |
 
 **Contentores:** `srsran-cu`, `srsran-du`, `srsran-ru`.
 
@@ -62,7 +62,7 @@ docker ps --filter name=srsran- --format 'table {{.Names}}\t{{.Status}}'
 ./scripts/verify-ofh.sh
 ```
 
-Confirma interfaces **`eth1`** no DU e **`eth0`** no RU na rede `ofhnet`.
+Confirma as interfaces e MACs do DU/RU na rede `ofhnet`.
 
 ### 2.3 Modo manual (ordem pedagógica)
 
@@ -118,7 +118,7 @@ cd gNB_open
 DU_CONFIG=du.yml CU_AUTO_START=1 DU_AUTO_START=1 ./scripts/up.sh
 ```
 
-**E2E com srsUE (portas 2002/2003):** mesma ordem **CU → srsUE → DU** que em `gNB_desagregated`:
+**E2E com srsUE (portas 2002/2003):** mesma ordem **CU → srsUE → DU** que em `gNB_disaggregated`:
 
 1. `./scripts/up.sh`
 2. `./scripts/start-cu.sh`
@@ -135,7 +135,7 @@ Detalhes: secção “srsUE + ZMQ” em [gNB_open/README.md](../../gNB_open/READ
 
 | Aspeto | Tradicional (Roteiro 02) | Desagregado (Roteiro 03) | Open / OFH (este roteiro) |
 |--------|---------------------------|---------------------------|----------------------------|
-| Pasta | `gNB_traditional/` | `gNB_desagregated/` | `gNB_open/` |
+| Pasta | `gNB_traditional/` | `gNB_disaggregated/` | `gNB_open/` |
 | Contentores srsRAN | 1 (`gnb`) | 2 (CU + DU) | 3 (CU + DU + **RU**) |
 | “Rádio” no lab | ZMQ / `ru_dummy` | ZMQ / `ru_dummy` | **RU emulada** (`ru_emulator`) + rede **`ofhnet`** |
 | Interface extra vs split simples | — | F1 | F1 + **Open Fronthaul** (DU–RU) |
@@ -155,7 +155,7 @@ A rede `gnb-open-ofhnet` pode ser removida pelo Compose ao encerrar o *stack*. O
 
 ## Checklist do Roteiro 05
 
-- [ ] `gNB_desagregated` **parado** antes de subir `gNB_open` (se aplicável).
+- [ ] `gNB_disaggregated` **parado** antes de subir `gNB_open` (se aplicável).
 - [ ] Três contentores **Up** no modo OFH **ou** justificação se usou apenas Modo B.
 - [ ] Saída de `validate-n2-ngap.sh` (a partir de `core/`).
 - [ ] Listagem de `gNB_open/logs/` + frase sobre **N2 / F1 / OFH**.

@@ -17,15 +17,15 @@ O **srsdu** tem de ligar o **UL** ZMQ ao *host* **depois** do srsUE fazer **bind
 
 O registo 5G precisa de **sincronismo PHY** entre **DU** e **srsUE** no *host*. **AMF/CU/DU F1-C** podem estar todos verdes e o UE ainda assim não avança se o **ZMQ** não trocar amostras.
 
-- **`du-zmq-srsue.yml`** `ru_sdr.device_args` tem de usar as **mesmas portas TCP** que **`ue_srsue.conf`**, e o `docker-compose` tem de publicar o **DL** (ex. `2002:2002` se DL=2002). Ver **`configs/ZMQ_PORTS.md`** (gNB_desagregated **2002/2003** vs monolítico **2000/2001**).
-- **`start-du-after-ue.sh`** espera a porta **UL** correta (`UE_ZMQ_UL_PORT`, padrão **2003** para gNB_desagregated). Se ainda apontar para **2001**, o script nunca deteta o UE ou deteta o srsUE do monolítico → **Attaching…** ou comportamento errático.
+- **`du-zmq-srsue.yml`** `ru_sdr.device_args` tem de usar as **mesmas portas TCP** que **`ue_srsue.conf`**, e o `docker-compose` tem de publicar o **DL** (ex. `2002:2002` se DL=2002). Ver **`configs/ZMQ_PORTS.md`** (gNB_disaggregated **2002/2003** vs monolítico **2000/2001**).
+- **`start-du-after-ue.sh`** espera a porta **UL** correta (`UE_ZMQ_UL_PORT`, padrão **2003** para gNB_disaggregated). Se ainda apontar para **2001**, o script nunca deteta o UE ou deteta o srsUE do monolítico → **Attaching…** ou comportamento errático.
 - **Linux / Docker Engine:** o DU liga o UL ZMQ a `host.docker.internal:2003`. Em muitos hosts isso **não** encaminha TCP para o processo srsUE no *host*. Os scripts **`start-du-after-ue.sh`** / **`run-du.sh`** substituem por o **Gateway** da rede `free5gc-privnet` (ver `scripts/lib-zmq-du-runtime.sh`). Não use só `docker exec … -c /etc/srsran/du-zmq-srsue.yml` sem essa substituição. Diagnóstico: `./scripts/diagnose-zmq.sh`.
 - Portas DL/UL desalinhadas entre DU e UE → **zero DL** no srsUE → eternamente **Attaching…**.
 - **1,92 MHz / x12 decimation** no arranque do srsUE é frequente antes de fechar o relógio a **23,04 MHz** — por si só não prova desalinhamento com o DU.
 
 ### srsUE (srsRAN 4G) — **dl_nr_arfcn** / **ssb_nr_arfcn** / **scs**
 
-O **srsUE** não vem do mesmo repositório que o DU (é o **srsRAN_4G**). Com ZMQ, se **não** definir em `[rat.nr]` os ARFCN alinhados ao que o **DU/gNB** imprime no arranque (`dl_arfcn` e `dl_ssb_arfcn`), a procura de célula pode falhar e o terminal fica em **«Attaching…»**. Os `ue_srsue.conf` deste repo incluem `scs=15`, `dl_nr_arfcn=368500`, `ssb_nr_arfcn=368410` (band 3, mesma célula que `du-zmq-srsue.yml`). Se mudar a célula, copie os valores do log do DU. Use **srsRAN 4G ≥ 23.11** (nota srsRAN Project). Log UE: `/tmp/srsue_gnb_desagregated.log`. Ref.: [srsRAN_Project#1318](https://github.com/srsran/srsRAN_Project/issues/1318).
+O **srsUE** não vem do mesmo repositório que o DU (é o **srsRAN_4G**). Com ZMQ, se **não** definir em `[rat.nr]` os ARFCN alinhados ao que o **DU/gNB** imprime no arranque (`dl_arfcn` e `dl_ssb_arfcn`), a procura de célula pode falhar e o terminal fica em **«Attaching…»**. Os `ue_srsue.conf` deste repo incluem `scs=15`, `dl_nr_arfcn=368500`, `ssb_nr_arfcn=368410` (band 3, mesma célula que `du-zmq-srsue.yml`). Se mudar a célula, copie os valores do log do DU. Use **srsRAN 4G ≥ 23.11** (nota srsRAN Project). Log UE: `/tmp/srsue_gnb_disaggregated.log`. Ref.: [srsRAN_Project#1318](https://github.com/srsran/srsRAN_Project/issues/1318).
 
 ### ZMQ e F1 OK, PHY «done», mas «Attaching…» não completa — **S-NSSAI no CU**
 
@@ -41,23 +41,23 @@ Isto indica que a **associação SCTP/N2** não permanece: ou o **CU** (`srscu`)
 
 ## Endereço do RAN nos logs do AMF (ex.: `10.100.200.11` vs `10.100.200.51`)
 
-O **CU** neste repositório deve ter **`10.100.200.51`** em `eth0` (ver `gNB_desagregated/docker-compose.yaml`). Nos logs do AMF, o contexto RAN deve referir **esse** IP.
+O **CU** neste repositório deve ter **`10.100.200.51`** em `eth0` (ver `gNB_disaggregated/docker-compose.yaml`). Nos logs do AMF, o contexto RAN deve referir **esse** IP.
 
 - Se aparecer **outro** (p.ex. **`.11`**), o *peer* SCTP **não** é o CU com IP estático — rede Docker incorreta, compose antigo ou contentor a usar IP dinâmico.
-- Execute: `./scripts/verify-ran-net.sh` (a partir de `gNB_desagregated/`) e confira a saída.
+- Execute: `./scripts/verify-ran-net.sh` (a partir de `gNB_disaggregated/`) e confira a saída.
 - Recrie a stack: `./scripts/down.sh`, confirme `docker network inspect free5gc-privnet`, volte a subir com `./scripts/up.sh`.
 
 ## Passos (por ordem)
 
 ### 1. Garantir **um** só gNB a usar N2 na mesma configuração de teste
 
-Pare o monólito: `cd gNB_tradicional && ./scripts/down.sh` e confirme que não há outro processo a ligar ao AMF na **38412**.
+Pare o monólito: `cd gNB_traditional && ./scripts/down.sh` e confirme que não há outro processo a ligar ao AMF na **38412**.
 
 ### 2. Ver o **CU** (causa mais comum do «shutdown» imediato)
 
 ```bash
 docker logs srsran-cu 2>&1 | tail -80
-tail -80 gNB_desagregated/logs/cu.log
+tail -80 gNB_disaggregated/logs/cu.log
 ```
 
 Procure **ERROR** / **FATAL** / **assert** logo após `N2: Connection to AMF` ou `NG Setup`. Se o processo **srscu** sair ou reiniciar, o AMF vê o mesmo padrão de SCTP a fechar.
@@ -82,7 +82,7 @@ Os valores **SCTP** `maxInitTimeout` e `maxAttempts` estão no máximo permitido
 
 ```bash
 # Com o CU a correr
-ls -la gNB_desagregated/logs/cu_ngap.pcap
+ls -la gNB_disaggregated/logs/cu_ngap.pcap
 ```
 
 Analise no Wireshark a sequência **NGSetupRequest** → **NGSetupResponse** → mensagens seguintes ou **ABORT**.

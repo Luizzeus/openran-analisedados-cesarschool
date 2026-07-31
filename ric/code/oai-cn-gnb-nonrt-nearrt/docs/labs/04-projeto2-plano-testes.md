@@ -4,7 +4,7 @@
 **Uso:** Workshop **Aula 05** · entrega como anexo do relatório do **Projeto 2**  
 **Peso na avaliação:** integrado em **P4** (reprodutibilidade) e **P5** (limitações) — ver [avaliacao_seminario_aula06.md](../avaliacao_seminario_aula06.md)
 
-**Código:** `modulo07-ric/code/oai-cn-gnb/`
+**Código:** `ric/code/oai-cn-gnb-e2/`
 
 ---
 
@@ -122,7 +122,7 @@ O repositório do Projeto 2 deve conter:
 ```markdown
 ## Como reproduzir
 
-1. cd modulo07-ric/code/oai-cn-gnb
+1. cd ric/code/oai-cn-gnb-e2
 2. ./scripts/build_e2.sh && ./scripts/build_flexric_tools.sh
 3. ./scripts/up_e2_lab.sh
 4. ./scripts/test_e2_kpm.sh
@@ -147,5 +147,5 @@ Adapte com os comandos que seu grupo realmente usou.
 
 - NGO et al. §6 — metodologia de validação
 - [02-oai-cn-gnb-flexric-e2.md](02-oai-cn-gnb-flexric-e2.md)
-- [code/oai-cn-gnb/docs/E2_FLEXRIC.md](../../code/oai-cn-gnb/docs/E2_FLEXRIC.md)
+- [../E2_FLEXRIC.md](../../../E2_FLEXRIC.md)
 - [avaliacao_seminario_aula06.md](../avaliacao_seminario_aula06.md)

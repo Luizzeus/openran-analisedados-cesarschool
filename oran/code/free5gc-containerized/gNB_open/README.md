@@ -11,7 +11,7 @@ Dois containers na rede `free5gc-privnet`:
 
 Além da rede `free5gc-privnet`, este projeto cria uma rede Docker dedicada ao fronthaul (L2):
 
-- `ofhnet` (bridge): liga **DU** ↔ **RU emulada** (interface **`eth1`** no DU e **`eth0`** no RU)
+- `ofhnet` (bridge): liga **DU** ↔ **RU emulada** (confira pelas MACs do OFH: DU `02:00:00:00:01:02`, RU `02:00:00:00:01:01`)
 - Serviço RU: `srsran-ru` (binário `ru_emulator` do srsRAN Project)
 
 O perfil do DU para Open Fronthaul está em `configs/du-ofh-ru-emulator.yml` (seção `ru_ofh`).
@@ -20,7 +20,7 @@ O perfil do DU para Open Fronthaul está em `configs/du-ofh-ru-emulator.yml` (se
 
 1. `bash ./scripts/up.sh` (sobe CU, DU e RU containers em modo *idle*)
 2. `bash ./scripts/start-cu.sh`
-3. (opcional) `bash ./scripts/verify-ofh.sh` (confere `eth1` no DU e `eth0` no RU)
+3. (opcional) `bash ./scripts/verify-ofh.sh` (confere as interfaces/MACs do link OFH)
 4. `bash ./scripts/start-ru-emulator.sh`
 5. `bash ./scripts/start-du-ofh.sh` (DU com `ru_ofh` + RU emulada)
 
@@ -92,4 +92,3 @@ Inclui **`dl_earfcn` em `[rat.eutra]`** e **`tx_port0`/`rx_port0`** para **um** 
 ### N2 instável no AMF
 
 [docs/TROUBLESHOOTING_N2.md](docs/TROUBLESHOOTING_N2.md)
-

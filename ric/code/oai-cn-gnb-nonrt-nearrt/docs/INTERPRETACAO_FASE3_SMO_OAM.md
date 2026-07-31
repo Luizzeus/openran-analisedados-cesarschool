@@ -1,4 +1,4 @@
-# Interpretacao - Fase 3 SMO, dados e IA/ML
+# Interpretacao - Fase 3 SMO/OAM
 
 Este guia explica como interpretar a Fase 3 e como pensar sua aplicacao real.
 Ele complementa [FASE3_SMO_OAM.md](FASE3_SMO_OAM.md).
@@ -7,48 +7,46 @@ Ele complementa [FASE3_SMO_OAM.md](FASE3_SMO_OAM.md).
 
 A Fase 3 responde:
 
-> Consigo adicionar um plano SMO isolado para observar topologia, receber eventos
-> de gestao, armazenar KPMs reais e executar um workflow IA/ML sem prejudicar
-> Fase 1 ou Fase 2?
+> Consigo adicionar um plano SMO/OAM isolado para observar topologia, eventos e
+> simuladores O1 sem prejudicar Fase 1 ou Fase 2?
 
 Ela nao promete:
 
-> O gNB OAI monolitico sera gerenciado por O1 NETCONF real.
+> O gNB OAI monolitico sera gerenciado por O1 real.
 
-O caminho realista no lab e O1 com simuladores O-DU/O-RU, mais ingestao de KPM
-real produzido pelos xApps das Fases 1/2.
+O caminho realista no lab e O1 com simuladores O-DU/O-RU.
 
 ## Evidencias principais
 
 | Evidencia | Onde ver | Interpretacao |
 |-----------|----------|---------------|
-| preflight passa | `test_smo_lab.sh --preflight` | compose local, Python e porta SMO estao prontos |
-| `smo-api` saudavel | `/health` | API aberta disponivel |
-| topologia aparece | `/topology` | O1 simulado publicou O-DU/O-RU/nearRT |
-| eventos VES aparecem | `/ves/v7/events` | plano de telemetria de gestao esta recebendo eventos |
-| KPMs aparecem | `/metrics/kpm` | coletor leu logs reais ou dados de teste |
-| decisoes aparecem | `/ml/runs` | workflow IA/ML executou sobre os dados |
+| snapshot local criado | `./scripts/test_smo_lab.sh` | SMO-lite consegue observar/correlacionar interfaces abertas |
+| preflight externo passa | `SMO_MODE=external ./scripts/test_smo_lab.sh --preflight` | checkout SMO/OAM tem compose minimo |
+| containers common ativos | `docker compose ps` no modo externo | dependencias base estao de pe |
+| SDNC ativo | compose OAM | plano de configuracao/O1 iniciou |
+| VES collector ativo | compose OAM/logs | eventos podem ser recebidos |
+| NTSIM/O-DU/O-RU ativos | compose `network` | O1 simulado disponivel |
 | Fase 1/2 nao alterada | containers/processos existentes | isolamento preservado |
 
-## Como interpretar a implementacao
+## Como interpretar o scaffold
 
-Os scripts de Fase 3 sobem uma implementacao local de SMO no repositorio. Ela
-nao baixa repositorios externos e nao depende do checkout O-RAN SC OAM para o
-fluxo principal.
+Os scripts de Fase 3 nao baixam repositorios e nao sobem SMO sem o usuario
+apontar `SMO_OAM_DIR`. Isso e deliberado.
 
 Leitura dos resultados:
 
 | Resultado | Interpretacao |
 |-----------|---------------|
-| `test_smo_lab.sh --preflight` passa | Fase 3 pode ser iniciada |
-| erro de porta `SMO_API_PORT` | porta HTTP local ocupada; escolha outra |
-| `/topology` vazio logo apos subir | aguarde o `o1-sim` publicar ou veja logs do container |
-| `/metrics/kpm` tem apenas dados de teste | Fase 1/2 ainda nao gerou KPM novo nos logs monitorados |
-| `/ml/runs` mostra `collect-more-data` | workflow subiu, mas ainda precisa de mais metricas |
+| modo local gera snapshot com erros de endpoint | esperado quando Fase 2/nonRT nao esta ativa |
+| erro `defina SMO_OAM_DIR` | comportamento esperado no modo externo; evita acao acidental |
+| erro de compose ausente | checkout externo incompleto ou layout diferente |
+| aviso de porta em uso | risco de conflito com Fase 1/2 ou outros servicos |
+| abort por stacks ativas | protecao de isolamento do modo externo funcionando |
+| `SMO_ALLOW_SHARED_HOST=1` necessario | usuario assumiu risco de coexistencia |
 
 ## Relacao com KPM
 
-SMO nao substitui KPM. A correlacao correta e:
+SMO/OAM nao substitui KPM. A correlacao correta e:
 
 ```text
 O1/VES/topologia dizem "o que a rede e como ela esta configurada"
@@ -72,66 +70,41 @@ KPMs a correlacionar com eventos OAM:
 
 ### Fase 3 saudavel
 
-- `test_smo_lab.sh --preflight` valida compose e sintaxe;
-- `up_smo_lab.sh` sobe quatro containers isolados;
-- `test_smo_lab.sh` injeta O1/VES/KPM de teste e le de volta;
-- `ml-workflow` grava recomendacoes em `/ml/runs`;
+- `test_smo_lab.sh --preflight` encontra `infra`, `smo/common`, `smo/oam`;
+- `up_smo_lab.sh` sobe com `COMPOSE_PROJECT_NAME` isolado;
+- `test_smo_lab.sh` lista containers;
 - Fase 1/2 continua igual apos `down_smo_lab.sh`.
 
-Conclusao: plano de gestao, dados e IA/ML podem ser explorados sem destruir o
-lab RAN/RIC.
+Conclusao: plano de gestao pode ser explorado sem destruir o lab RAN/RIC.
 
 ### OAM sobe, mas nao ha eventos
 
 Possiveis causas:
 
-- container `smo-o1-sim` ainda nao publicou;
-- API `smo-api` nao ficou saudavel;
-- houve erro de rede interna no compose.
+- simuladores `network` nao foram habilitados;
+- VES endpoint nao recebeu payload;
+- SDNC/NETCONF nao esta conectado a nenhum NTSIM;
+- topologia TEIV nao foi habilitada.
 
 Acao:
 
 ```bash
-docker compose -p oai-smo-lab -f config/smo/docker-compose.yml logs --tail=80 smo-o1-sim
-curl http://127.0.0.1:18080/topology
+SMO_WITH_NETWORK=1 SMO_OAM_DIR=/path/para/oam ./scripts/up_smo_lab.sh
+SMO_WITH_TEIV=1 SMO_OAM_DIR=/path/para/oam ./scripts/up_smo_lab.sh
 ```
 
 ### KPM muda, mas SMO nao mostra nada
 
-Possiveis causas:
-
-- Fase 3 foi iniciada depois do KPM e o coletor ainda nao viu linhas novas;
-- o xApp usado gravou em outro arquivo;
-- o arquivo de log esta vazio ou sem padrao `METRIC = value [unit]`.
-
-Acao:
-
-```bash
-sudo ./scripts/test_e2_kpm.sh
-curl "http://127.0.0.1:18080/metrics/kpm?limit=20"
-./scripts/run_smo_ml_workflow.sh
-```
-
-## Modo externo O-RAN SC OAM
-
-O modo externo continua util quando a meta for testar os composes oficiais do
-projeto O-RAN SC OAM:
-
-```bash
-SMO_MODE=external SMO_OAM_DIR=/path/para/oam ./scripts/test_smo_lab.sh --preflight
-SMO_MODE=external SMO_OAM_DIR=/path/para/oam ./scripts/up_smo_lab.sh
-```
-
-Nesse modo, a interpretacao volta a depender de SDNC, VES collector, Keycloak,
-Kafka e simuladores do checkout externo.
+Isso e esperado se a mudanca foi apenas no plano E2/RAN. SMO/OAM precisa de
+eventos O1/VES ou topologia conectada para refletir algo.
 
 ## Como pensar em aplicacao real
 
-A Fase 3 e a base para operacao de rede, inventario, historico e closed loop de
-gestao. Aplicacoes reais:
+A Fase 3 e a base para operacao de rede, inventario e closed-loop de gestao.
+Aplicacoes reais:
 
 - correlacionar alarmes VES com queda de `DRB.UEThp*`;
-- usar topologia para saber qual celula/DU/RU esta afetada;
+- usar topologia TEIV para saber qual celula/DU/RU esta afetada;
 - disparar rApp que cria policy A1 quando `RRU.PrbTot*` fica alto por janela longa;
 - documentar mudancas de configuracao e medir impacto em KPM;
 - simular falha O-DU/O-RU e observar se o inventario/eventos explicam a degradacao.
@@ -139,38 +112,36 @@ gestao. Aplicacoes reais:
 Fluxo conceitual:
 
 ```text
-evento O1/VES -> contexto topologico -> workflow IA/ML -> rApp/nonRT -> policy A1
+evento O1/VES -> contexto topologico -> rApp/nonRT -> policy A1
              -> xApp nearRT -> acao E2 -> KPM confirma impacto
 ```
 
 ## Como validar aplicacao real com o lab
 
-1. Suba Fase 3.
-2. Gere baseline KPM na Fase 1 ou Fase 2.
-3. Confira se `/metrics/kpm` recebeu as amostras.
-4. Confira se `/topology` e `/ves/v7/events` tem contexto de gestao.
-5. Rode `run_smo_ml_workflow.sh`.
-6. Guarde a recomendacao de `/ml/runs`.
-7. Se houver rApp/policy, valide se a policy foi criada no PMS e chegou no A1.
+1. Gere baseline KPM na Fase 1 ou Fase 2.
+2. Suba SMO/OAM com simuladores.
+3. Gere evento/alteracao no simulador O1.
+4. Registre timestamp do evento.
+5. Compare KPM antes/depois.
+6. Se houver rApp/policy, valide se a policy foi criada no PMS e chegou no A1.
 
 Artefatos para guardar:
 
 | Artefato | Para que serve |
 |----------|----------------|
-| dump `/metrics/kpm` | efeito no plano radio |
-| dump `/ves/v7/events` | evento de gestao |
-| dump `/topology` | escopo do impacto |
-| dump `/ml/runs` | decisao IA/ML |
-| dump PMS policies | decisao nonRT, quando conectada |
+| `kpm_*_summary.txt` | efeito no plano radio |
+| logs VES/OAM | evento de gestao |
+| dump PMS policies | decisao nonRT |
 | logs xApp | acao nearRT |
+| topologia TEIV | escopo do impacto |
 
 ## Criterio de maturidade
 
 | Nivel | Descricao |
 |-------|-----------|
 | 0 | preflight SMO passa |
-| 1 | SMO local sobe isolado |
-| 2 | simulador O1 gera topologia/evento observavel |
-| 3 | KPM real das Fases 1/2 e armazenado no SMO |
-| 4 | workflow IA/ML cria recomendacao baseada em dados |
-| 5 | recomendacao vira policy A1/rApp e xApp aplica acao E2 |
+| 1 | SMO/OAM sobe isolado |
+| 2 | simulador O1 gera evento observavel |
+| 3 | evento e correlacionado com KPM |
+| 4 | rApp cria policy A1 baseada no evento/KPM |
+| 5 | xApp aplica acao E2 e KPM confirma melhoria |

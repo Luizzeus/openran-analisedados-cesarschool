@@ -21,7 +21,7 @@ echo "=========================================="
 echo "Encerrando free5GC"
 echo "=========================================="
 echo ""
-echo "Dica: se a RAN ainda estiver ativa (gNB_tradicional / gNB_desagregated), pode encerrá-la antes para evitar erros de N2 nos logs."
+echo "Dica: se a RAN ainda estiver ativa (gNB_traditional / gNB_disaggregated), pode encerrá-la antes para evitar erros de N2 nos logs."
 echo ""
 
 # Verificar se há containers rodando

@@ -24,5 +24,4 @@ echo "  ru_mac_addr: 02:00:00:00:01:01"
 echo "  du_mac_addr: 02:00:00:00:01:02"
 echo "Confirme se essas MACs batem com:"
 echo "  RU: MAC da eth0 (srsran-ru)"
-echo "  DU: MAC da eth1 (srsran-du)"
-
+echo "  DU: interface com MAC 02:00:00:00:01:02 (o entrypoint ajusta o YAML para esta interface)"

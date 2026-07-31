@@ -4,7 +4,7 @@
 # ZMQ (RF emulado com srsUE) não entra aqui — só no DU: configs/du-zmq-srsue.yml (ru_sdr).
 #
 # ran_node_name / gnb_id / gnb_id_bit_length ficam no nível raiz (ref. srsRAN config_ref).
-# Global gNB ID distinto do gNB monolítico em gNB_tradicional (411).
+# Global gNB ID distinto do gNB monolítico em gNB_traditional (411).
 #
 # Slices (S-NSSAI) — coerência obrigatória com o core e com o subscritor:
 #   - AMF: configuration.plmnSupportList[].snssaiList (sd em hex 6 dígitos)
@@ -13,7 +13,7 @@
 # Equivalência: 0x010203 = 66051 | 0x112233 = 1122867
 # PLMN 20893 e TAC 1: alinhar com supportTaiList (AMF: tac 000001) e du-zmq-srsue.yml cell_cfg (tac/plmn).
 
-ran_node_name: srsgnb_desagregated412
+ran_node_name: srsgnb_disaggregated412
 gnb_id: 412
 gnb_id_bit_length: 22
 

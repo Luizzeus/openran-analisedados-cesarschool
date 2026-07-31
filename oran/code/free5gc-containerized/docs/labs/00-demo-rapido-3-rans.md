@@ -4,7 +4,7 @@ Guia curto para demonstração em sala, validando em sequência:
 
 1. `core` (free5GC)
 2. `gNB_traditional` (monolítico)
-3. `gNB_desagregated` (CU/DU split)
+3. `gNB_disaggregated` (CU/DU split)
 4. `gNB_open` (CU/DU + Open Fronthaul com RU emulada)
 
 ## 0) Pré-checks
@@ -57,7 +57,7 @@ cd ../gNB_traditional
 Sem UE (fluxo estável para demo de interfaces):
 
 ```bash
-cd ../gNB_desagregated
+cd ../gNB_disaggregated
 DU_CONFIG=du.yml CU_AUTO_START=1 DU_AUTO_START=1 ./scripts/up.sh
 
 cd ../core
@@ -68,12 +68,12 @@ Critério de sucesso:
 
 - `srsran-cu` e `srsran-du` em `Up`.
 - `validate-n2-ngap.sh` em sucesso.
-- DU com F1-C conectado ao CU (em `gNB_desagregated/logs/du.log`).
+- DU com F1-C conectado ao CU (em `gNB_disaggregated/logs/du.log`).
 
 Encerrar antes do próximo cenário:
 
 ```bash
-cd ../gNB_desagregated
+cd ../gNB_disaggregated
 ./scripts/down.sh
 ```
 
@@ -106,7 +106,7 @@ cd ../core
 
 ## Notas de operação para evitar falhas em demo
 
-- `gNB_desagregated` e `gNB_open` nao podem subir juntos (mesmos nomes/IPs de CU/DU).
+- `gNB_disaggregated` e `gNB_open` nao podem subir juntos (mesmos nomes/IPs de CU/DU).
 - `gNB_open/scripts/*.sh` deve estar executável. Se necessário:
   `chmod +x gNB_open/scripts/*.sh`
 - Para demo com UE (ZMQ), use ordem: `CU -> srsUE -> DU`.

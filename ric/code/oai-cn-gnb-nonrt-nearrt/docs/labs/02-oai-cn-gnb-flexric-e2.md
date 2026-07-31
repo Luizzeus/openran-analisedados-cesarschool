@@ -2,7 +2,7 @@
 
 **Disciplina:** RAN Intelligent Controller (RIC) · **Aulas 04, 05 e 06**
 
-**Código:** `modulo07-ric/code/oai-cn-gnb/`
+**Código:** `ric/code/oai-cn-gnb-e2/`
 
 ## Documentação relacionada
 
@@ -11,8 +11,8 @@
 | [03-demo-e2-aula04.md](03-demo-e2-aula04.md) | Demo guiada em sala (Bloco 3, Aula 04) |
 | [04-projeto2-plano-testes.md](04-projeto2-plano-testes.md) | Plano de testes Projeto 2 (workshop Aula 05) |
 | [../E2_FLEXRIC.md](../E2_FLEXRIC.md) | Índice de documentação E2 |
-| [code/oai-cn-gnb/docs/E2_FLEXRIC.md](../../code/oai-cn-gnb/docs/E2_FLEXRIC.md) | Build, deploy, scripts, troubleshooting |
-| [code/oai-cn-gnb/docs/E2_SERVICE_MODELS.md](../../code/oai-cn-gnb/docs/E2_SERVICE_MODELS.md) | KPM, RC, custom, interpretação de logs |
+| [../E2_FLEXRIC.md](../../../E2_FLEXRIC.md) | Build, deploy, scripts, troubleshooting |
+| [../E2_SERVICE_MODELS.md](../../../E2_SERVICE_MODELS.md) | KPM, RC, custom, interpretação de logs |
 | [../avaliacao_seminario_aula06.md](../avaliacao_seminario_aula06.md) | Rubrica Projeto 2 (40%) |
 
 ---
@@ -58,7 +58,7 @@ Os scripts passam `--e2_agent.sm_dir flexric-lib/` quando o build FlexRIC foi ex
 - Build com E2 e FlexRIC alinhados (**E2AP_V2**, **KPM_V2_03**):
 
 ```bash
-cd modulo07-ric/code/oai-cn-gnb
+cd ric/code/oai-cn-gnb-e2
 ./scripts/build_e2.sh
 ./scripts/build_flexric_tools.sh
 ```
@@ -70,7 +70,7 @@ cd modulo07-ric/code/oai-cn-gnb
 **Opção rápida:**
 
 ```bash
-cd modulo07-ric/code/oai-cn-gnb
+cd ric/code/oai-cn-gnb-e2
 ./scripts/up_e2_lab.sh
 ```
 
@@ -146,7 +146,7 @@ grep -iE 'E2 SETUP' logs/gnb_oai.log
 ./scripts/test_e2_kpm.sh
 ```
 
-Consulte [E2_SERVICE_MODELS.md](../../code/oai-cn-gnb/docs/E2_SERVICE_MODELS.md) para interpretação dos logs.
+Consulte [E2_SERVICE_MODELS.md](../../../E2_SERVICE_MODELS.md) para interpretação dos logs.
 
 ---
 
@@ -172,7 +172,7 @@ Consulte [E2_SERVICE_MODELS.md](../../code/oai-cn-gnb/docs/E2_SERVICE_MODELS.md)
 | Sintoma | Ação |
 |---------|------|
 | `demo-oai` não encontrada | Subir core antes do gNB (`up_core.sh`) |
-| E2 setup falha | Mesmas versões E2AP/KPM em OAI e FlexRIC; ver [E2_FLEXRIC.md](../../code/oai-cn-gnb/docs/E2_FLEXRIC.md) §8 |
+| E2 setup falha | Mesmas versões E2AP/KPM em OAI e FlexRIC; ver [E2_FLEXRIC.md](../../../E2_FLEXRIC.md) §8 |
 | xApp em `Resending Setup Request` | `ls flexric-lib/libkpm_sm.so`; `./scripts/sync_flexric_lib.sh` |
 | Crash KPM / `Unknown RAN function ID` | Usar `flexric-lib/` (não `/usr/local`); reiniciar RIC |
 | Subscrição OK, sem métricas KPM | `KPM_TRAFFIC=1`; aguardar attach UE; slice 222/123 |
@@ -182,6 +182,6 @@ Consulte [E2_SERVICE_MODELS.md](../../code/oai-cn-gnb/docs/E2_SERVICE_MODELS.md)
 
 ## Referências
 
-- [E2_FLEXRIC.md](../E2_FLEXRIC.md) · [E2_FLEXRIC técnico](../../code/oai-cn-gnb/docs/E2_FLEXRIC.md)
-- OAI E2: `code/oai-cn-gnb/openairinterface5g/openair2/E2AP/README.md`
+- [E2_FLEXRIC.md](../E2_FLEXRIC.md) · [E2_FLEXRIC técnico](../../../E2_FLEXRIC.md)
+- OAI E2: `ric/code/oai-cn-gnb-e2/openairinterface5g/openair2/E2AP/README.md`
 - NGO et al. §3 (FlexRIC) · §6 (validação) · Polese — E2/E2SM

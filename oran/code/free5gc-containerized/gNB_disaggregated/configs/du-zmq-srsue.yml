@@ -1,8 +1,11 @@
-# srsDU — split F1 + RU ZMQ para srsUE (mesma pilha RF/célula que gNB_tradicional/gnb-zmq-srsue.yml)
+# srsDU — split F1 + RU ZMQ para srsUE (mesma pilha RF/célula que gNB_traditional/gnb-zmq-srsue.yml)
 # CU-CP: 10.100.200.51 | DU: 10.100.200.52
 #
 # ZMQ: 2002 (DL), 2003 (UL) — TÊM de coincidir com configs/ue_srsue.conf e com "2002:2002" no docker-compose.
 # rx_port host.docker.internal: scripts/start-du-after-ue.sh substituem pelo Gateway da rede Docker (Linux).
+
+gnb_id: 412
+gnb_id_bit_length: 22
 
 f1ap:
   cu_cp_addr: 10.100.200.51

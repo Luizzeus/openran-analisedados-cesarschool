@@ -51,7 +51,7 @@ O **CU** neste repositório deve ter **`10.100.200.51`** em `eth0` (ver `gNB_ope
 
 ### 1. Garantir **um** só gNB a usar N2 na mesma configuração de teste
 
-Pare o monólito: `cd gNB_tradicional && ./scripts/down.sh` e confirme que não há outro processo a ligar ao AMF na **38412**.
+Pare o monólito: `cd gNB_traditional && ./scripts/down.sh` e confirme que não há outro processo a ligar ao AMF na **38412**.
 
 ### 2. Ver o **CU** (causa mais comum do «shutdown» imediato)
 

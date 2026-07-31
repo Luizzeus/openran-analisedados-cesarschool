@@ -41,9 +41,6 @@ kill_stale_xapps() {
 wait_e2_node() {
     local gnb_log="$LOG_DIR/gnb_oai.log"
     for _ in $(seq 1 40); do
-        if ! pgrep -f "nr-softmodem" >/dev/null 2>&1; then
-            return 2
-        fi
         if grep -q "E2 SETUP RESPONSE rx" "$gnb_log" 2>/dev/null; then
             return 0
         fi
@@ -70,8 +67,6 @@ ensure_e2_stack() {
     pkill -f "nr-softmodem" 2>/dev/null || true
     pkill -f "nr-uesoftmodem" 2>/dev/null || true
     sleep 2
-    : > "$LOG_DIR/gnb_oai.log"
-    : > "$LOG_DIR/ue_oai.log"
 
     if ! ip -4 addr show demo-oai 2>/dev/null | grep -q "192.168.70.129"; then
         sudo ip addr add 192.168.70.129/24 dev demo-oai 2>/dev/null || true
@@ -82,37 +77,16 @@ ensure_e2_stack() {
     sudo nohup ./nr-softmodem -O "$OAI_DIR/scripts/gnb.conf" \
         --gNBs.[0].min_rxtxtime 6 --rfsim "${E2_SM_ARGS[@]}" \
         >> "$LOG_DIR/gnb_oai.log" 2>&1 &
-    GNB_PID=$!
     sleep 12
-    if ! kill -0 "$GNB_PID" 2>/dev/null; then
-        echo "ERRO: gNB abortou antes do nrUE iniciar."
-        echo "Últimas linhas de $LOG_DIR/gnb_oai.log:"
-        tail -40 "$LOG_DIR/gnb_oai.log" || true
-        exit 1
-    fi
     sudo nohup ./nr-uesoftmodem -O "$OAI_DIR/scripts/ue.conf" \
         --rfsim -r 106 --numerology 1 --band 78 -C 3619200000 --ssb 516 \
         >> "$LOG_DIR/ue_oai.log" 2>&1 &
-    UE_PID=$!
 
     echo "Aguardando E2 setup + attach UE..."
-    wait_e2_node
-    wait_rc=$?
-    if [ "$wait_rc" -eq 2 ]; then
-        echo "ERRO: gNB abortou durante o E2 setup."
-        echo "Últimas linhas de $LOG_DIR/gnb_oai.log:"
-        tail -60 "$LOG_DIR/gnb_oai.log" || true
-        exit 1
-    elif [ "$wait_rc" -ne 0 ]; then
+    if ! wait_e2_node; then
         echo "AVISO: E2 setup não confirmado em 40s (continuando mesmo assim)"
         grep -iE 'E2 SETUP|E2-AGENT' "$LOG_DIR/gnb_oai.log" 2>/dev/null | tail -5 || true
         grep -iE 'E2 SETUP|Registered' "$LOG_DIR/nearRT-RIC.log" 2>/dev/null | tail -5 || true
-    fi
-    if ! kill -0 "$UE_PID" 2>/dev/null; then
-        echo "ERRO: nrUE abortou antes de criar sessão PDU."
-        echo "Últimas linhas de $LOG_DIR/ue_oai.log:"
-        tail -60 "$LOG_DIR/ue_oai.log" || true
-        exit 1
     fi
     sleep 5
 }

@@ -72,7 +72,7 @@ while ! port_ready "${UE_PORT}"; do
   fi
   if [ "$n" -ge "$TIMEOUT_SEC" ]; then
     echo "Timeout: a porta ${UE_PORT} não abriu. Confirme srsUE com o mesmo ue_srsue.conf (UL=${UE_PORT})."
-    echo "  Conflitos: gNB_tradicional usa 2000/2001; gNB_open usa 2002/2003 — ver configs/ZMQ_PORTS.md"
+    echo "  Conflitos: gNB_traditional usa 2000/2001; gNB_open usa 2002/2003 — ver configs/ZMQ_PORTS.md"
     exit 1
   fi
   sleep 1

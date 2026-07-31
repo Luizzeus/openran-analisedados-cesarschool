@@ -21,5 +21,16 @@ fi
 
 echo "Dica: confirme MACs do link OFH antes (opcional): ./scripts/verify-ofh.sh"
 echo "Iniciando srsDU (ru_ofh) com ${CFG}..."
-exec docker exec -it srsran-du srsdu -c "/etc/srsran/${CFG}"
-
+exec docker exec -it srsran-du sh -lc "
+set -eu
+CFG='/etc/srsran/${CFG}'
+DU_OFH_MAC=\"\${DU_OFH_MAC:-02:00:00:00:01:02}\"
+OFH_IFACE=\$(ip -o link show | awk -v mac=\"\${DU_OFH_MAC}\" 'tolower(\$0) ~ tolower(mac) { gsub(\":\", \"\", \$2); print \$2; exit }')
+if [ -n \"\${OFH_IFACE}\" ]; then
+  echo \"[info] OFH interface detected by MAC \${DU_OFH_MAC}: \${OFH_IFACE}\"
+  sed \"s/^\\([[:space:]]*network_interface:[[:space:]]*\\).*/\\1\${OFH_IFACE}/\" \"\${CFG}\" > /tmp/du-ofh-runtime.yml
+  exec srsdu -c /tmp/du-ofh-runtime.yml
+fi
+echo \"[warn] OFH interface with MAC \${DU_OFH_MAC} not found; using \${CFG}\"
+exec srsdu -c \"\${CFG}\"
+"

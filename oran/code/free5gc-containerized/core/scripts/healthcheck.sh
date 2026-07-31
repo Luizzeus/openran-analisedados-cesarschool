@@ -60,12 +60,12 @@ for name in "${!SERVICES[@]}"; do
     fi
 done
 
-echo "🔍 RAN (compose separado em gNB_tradicional / gNB_desagregated)..."
+echo "🔍 RAN (compose separado em gNB_traditional / gNB_disaggregated)..."
 if list_ran_n2_containers; then
     echo -e "${GREEN}✓ RAN N2 ativo(s): ${RAN_N2_CONTAINERS[*]}${NC}"
     ((HEALTHY++))
 else
-    echo -e "${YELLOW}⚠ Nenhum container RAN N2 ativo (esperado se ainda não subiu gNB_tradicional/gNB_desagregated)${NC}"
+    echo -e "${YELLOW}⚠ Nenhum container RAN N2 ativo (esperado se ainda não subiu gNB_traditional/gNB_disaggregated)${NC}"
 fi
 echo ""
 

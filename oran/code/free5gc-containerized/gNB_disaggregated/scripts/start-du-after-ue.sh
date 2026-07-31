@@ -2,7 +2,7 @@
 # Inicia o srsdu DEPOIS do srsUE — o UE tem de estar à escuta na porta UL (TCP) antes do DU
 # ligar a host.docker.internal nessa porta.
 #
-# Padrão gNB_desagregated: UL **2003** (DL 2002) — ver configs/ZMQ_PORTS.md e configs/ue_srsue.conf.
+# Padrão gNB_disaggregated: UL **2003** (DL 2002) — ver configs/ZMQ_PORTS.md e configs/ue_srsue.conf.
 # Se mudar portas no YAML/UE, exporte: UE_ZMQ_UL_PORT=...
 #
 # Uso (ordem obrigatória):
@@ -72,7 +72,7 @@ while ! port_ready "${UE_PORT}"; do
   fi
   if [ "$n" -ge "$TIMEOUT_SEC" ]; then
     echo "Timeout: a porta ${UE_PORT} não abriu. Confirme srsUE com o mesmo ue_srsue.conf (UL=${UE_PORT})."
-    echo "  Conflitos: gNB_tradicional usa 2000/2001; gNB_desagregated usa 2002/2003 — ver configs/ZMQ_PORTS.md"
+    echo "  Conflitos: gNB_traditional usa 2000/2001; gNB_disaggregated usa 2002/2003 — ver configs/ZMQ_PORTS.md"
     exit 1
   fi
   sleep 1

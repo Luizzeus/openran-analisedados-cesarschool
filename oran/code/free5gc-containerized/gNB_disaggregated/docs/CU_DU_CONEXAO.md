@@ -43,10 +43,10 @@ Send NG-Setup response
 ### CU
 
 - **Consola do processo** (se arrancou com `docker exec -it srsran-cu …`): mensagens de *N2 connected*, *NG Setup*, *F1* à escuta.
-- **Arquivo de log** (montado em `gNB_desagregated/logs/`):
+- **Arquivo de log** (montado em `gNB_disaggregated/logs/`):
 
 ```bash
-tail -f gNB_desagregated/logs/cu.log
+tail -f gNB_disaggregated/logs/cu.log
 ```
 
 - **Contentor Docker** (stdout do `srscu`):
@@ -55,12 +55,12 @@ tail -f gNB_desagregated/logs/cu.log
 docker logs -f srsran-cu
 ```
 
-- **NGAP em PCAP** (se ativo no `cu.yml`): `gNB_desagregated/logs/cu_ngap.pcap`.
+- **NGAP em PCAP** (se ativo no `cu.yml`): `gNB_disaggregated/logs/cu_ngap.pcap`.
 
 ### DU
 
 ```bash
-tail -f gNB_desagregated/logs/du.log
+tail -f gNB_disaggregated/logs/du.log
 docker logs -f srsran-du
 ```
 

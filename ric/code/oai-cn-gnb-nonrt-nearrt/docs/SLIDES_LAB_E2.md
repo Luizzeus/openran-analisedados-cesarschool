@@ -2,8 +2,8 @@
 marp: true
 theme: default
 paginate: true
-header: "Stack O-RAN sobre OAI · Disciplina RIC / Open RAN"
-footer: "Jun 2026 · ric/code/oai-cn-gnb-nonrt-nearrt"
+header: "OAI + E2 Interface · RNP Failover / CERISE"
+footer: "Jun 2026 · code/oai-cn-gnb"
 style: |
   section {
     font-family: 'Segoe UI', system-ui, sans-serif;
@@ -33,29 +33,20 @@ style: |
 <!-- _class: lead -->
 <!-- _paginate: false -->
 
-# Laboratório O-RAN sobre OAI
+# Laboratório OAI + Interface E2
 
-### nonRT RIC · nearRT (FlexRIC / O-RAN SC) · SMO/OAM
+### Resultados com FlexRIC · Service Models RC & KPM
 
-**Disciplina:** RAN Intelligent Controller (RIC) / Open RAN — Cesar School  
-**Projeto:** `oai-cn-gnb-nonrt-nearrt` (evolução do lab E2 em `oai-cn-gnb-e2`)  
-**Stack:** Core OAI · gNB/nrUE RFSIM · E2 · nonRT PMS/A1 · nearRT-RIC · xApps
+**Projeto:** RNP Failover / CERISE  
+**Stack:** Core OAI (UPF-VPP) · gNB/nrUE RFSIM · nearRT-RIC · xApps
 
-`ric/code/oai-cn-gnb-nonrt-nearrt`
+`code/oai-cn-gnb`
 
 ---
 
 ## Objetivo
 
-Percorrer a **arquitetura O-RAN** em três fases isoladas sobre a pilha OAI:
-
-| Fase | Foco |
-|------|------|
-| **1** | nonRT RIC (PMS/A1 sim) + nearRT FlexRIC (E2, KPM/RC) |
-| **2** | nearRT O-RAN SC + interface A1 real |
-| **3** | SMO/OAM (gestão, O1 simulado) |
-
-Na **Fase 1**, validar a **interface E2** e **Service Models**:
+Validar a **interface E2** no gNB OpenAirInterface com testes de **Service Models**:
 
 | SM | Padrão | Foco |
 |----|--------|------|
@@ -254,7 +245,7 @@ Compilar SMs do submodule **`dev`** → diretório **`flexric-lib/`**
 ## Como reproduzir (resumo)
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb
 
 # Build (uma vez)
 ./scripts/build_e2.sh

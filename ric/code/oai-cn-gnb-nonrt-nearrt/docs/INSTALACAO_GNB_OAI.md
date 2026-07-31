@@ -1,6 +1,6 @@
 # Instalação e Uso do gNB OAI (RFSIM)
 
-Guia detalhado para instalação, build e execução do **gNB OAI** e **nrUE** em modo **RFSIM** (simulador de RF), integrado ao Core OAI do projeto oai-cn-gnb-nonrt-nearrt.
+Guia detalhado para instalação, build e execução do **gNB OAI** e **nrUE** em modo **RFSIM** (simulador de RF), integrado ao Core OAI do projeto oai-cn-gnb.
 
 ---
 
@@ -54,7 +54,7 @@ openairinterface5g/cmake_targets/ran_build/build/
 Execute **uma vez** para instalar pacotes necessários:
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/cmake_targets
+cd oai-cn-gnb/openairinterface5g/cmake_targets
 ./build_oai -I
 ```
 
@@ -79,7 +79,7 @@ O script `-I` instala, entre outros:
 ### 4.1 Build para RFSIM (gNB + nrUE)
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/cmake_targets
+cd oai-cn-gnb/openairinterface5g/cmake_targets
 ./build_oai --ninja -I                    # Se ainda não instalou dependências
 ./build_oai --ninja --gNB --nrUE -w SIMU -c
 ```
@@ -97,8 +97,8 @@ O build pode levar **10–30 minutos** dependendo da máquina.
 ### 4.2 Verificar o build
 
 ```bash
-ls -la ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/cmake_targets/ran_build/build/nr-softmodem
-ls -la ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/cmake_targets/ran_build/build/nr-uesoftmodem
+ls -la oai-cn-gnb/openairinterface5g/cmake_targets/ran_build/build/nr-softmodem
+ls -la oai-cn-gnb/openairinterface5g/cmake_targets/ran_build/build/nr-uesoftmodem
 ```
 
 Se os arquivos existirem e forem executáveis, o build foi bem-sucedido.
@@ -148,7 +148,7 @@ Se o Core estiver rodando e a interface configurada, o ping deve funcionar.
 
 ### 6.1 Método recomendado: scripts do projeto
 
-A partir do diretório **ric/code/oai-cn-gnb-nonrt-nearrt**:
+A partir do diretório **oai-cn-gnb**:
 
 ```bash
 # 1. Iniciar o Core (se ainda não estiver rodando)
@@ -185,21 +185,21 @@ sudo: ./nr-softmodem: command not found
 **Forma correta**:
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/scripts
+cd oai-cn-gnb/openairinterface5g/scripts
 ./run_gnb.sh
 ```
 
 Em outro terminal:
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/scripts
+cd oai-cn-gnb/openairinterface5g/scripts
 ./run_ue.sh
 ```
 
 ### 6.3 Execução direta (sem scripts)
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/cmake_targets/ran_build/build
+cd oai-cn-gnb/openairinterface5g/cmake_targets/ran_build/build
 
 # Terminal 1: gNB
 sudo ./nr-softmodem -O ../../../scripts/gnb.conf \
@@ -222,7 +222,7 @@ sudo ./nr-uesoftmodem -O ../../../scripts/ue.conf \
 **Solução**: Execute a partir de `openairinterface5g/scripts/`:
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/scripts
+cd oai-cn-gnb/openairinterface5g/scripts
 ./run_gnb.sh
 ```
 
@@ -237,7 +237,7 @@ Ou use o script do projeto: `./scripts/up_gnb_oai.sh`.
 **Solução**:
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt/openairinterface5g/cmake_targets
+cd oai-cn-gnb/openairinterface5g/cmake_targets
 ./build_oai --ninja -I
 ./build_oai --ninja --gNB --nrUE -w SIMU -c
 ```
@@ -315,4 +315,4 @@ Para pacotes opcionais (pcre, libssh, libxml2):
 
 - [OAI 5G NR SA Tutorial (nrUE)](../openairinterface5g/doc/NR_SA_Tutorial_OAI_nrUE.md)
 - [OAI 5G RFSIM (containers)](../openairinterface5g/ci-scripts/yaml_files/5g_rfsimulator/README.md)
-- [README principal do oai-cn-gnb-nonrt-nearrt](../README.md)
+- [README principal do oai-cn-gnb](../README.md)

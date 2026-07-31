@@ -2,8 +2,6 @@
 
 Guia para operar a interface **E2** entre o gNB OAI e um **nearRT-RIC** (FlexRIC), e testar **Service Models** (SMs) O-RAN e customizados.
 
-> **Projeto `oai-cn-gnb-nonrt-nearrt`:** cobre a **Fase 1** (nearRT FlexRIC). Ver [FASES_ORAN_LAB.md](FASES_ORAN_LAB.md) para nonRT RIC, O-RAN SC (Fase 2) e SMO/OAM (Fase 3).
-
 ## Arquitetura
 
 ```
@@ -59,7 +57,7 @@ Documentação upstream: `openairinterface5g/openair2/E2AP/README.md`
 ## Build do gNB com E2 Agent
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb
 ./scripts/build_e2.sh
 ```
 

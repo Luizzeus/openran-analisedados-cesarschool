@@ -46,7 +46,7 @@ O padrão do container **srsran-gnb-tradicional** é **gnb-zmq-srsue.yml** (ZMQ 
 Com `./scripts/up.sh`, o **processo `gnb` não inicia automaticamente** no container (`GNB_AUTO_START=0` por padrão). Para iniciar o `gnb` automaticamente, use `GNB_AUTO_START=1 ./scripts/up.sh`.
 
 ```bash
-cd gNB_tradicional
+cd gNB_traditional
 ./scripts/up.sh
 docker exec -it srsran-gnb-tradicional bash
 ```
@@ -87,7 +87,7 @@ ldconfig
 
 ## 3. Configuração do srsUE
 
-Use o arquivo `gNB_tradicional/configs/ue_srsue.conf`, alinhado ao subscriber do free5GC.
+Use o arquivo `gNB_traditional/configs/ue_srsue.conf`, alinhado ao subscriber do free5GC.
 
 Credenciais (mesmas do `add-subscriber.sh`):
 
@@ -158,7 +158,7 @@ sudo ip netns add ue1
 ## 4. Ordem de execução
 
 1. **Core free5GC** (compose) e **subscriber** (`./scripts/add-subscriber.sh`).
-2. **gNB em modo ZMQ** (padrão): `cd gNB_tradicional && ./scripts/up.sh` — confirmar nos logs que o gNB arrancou (`docker logs srsran-gnb-tradicional`).
+2. **gNB em modo ZMQ** (padrão): `cd gNB_traditional && ./scripts/up.sh` — confirmar nos logs que o gNB arrancou (`docker logs srsran-gnb-tradicional`).
 3. **srsUE** no host (em outro terminal): `srsue configs/ue_srsue.conf`
 
 **Importante:** O srsUE deve estar em execução (bind 2001) para o gNB completar a conexão ZMQ. Pode iniciar o gNB antes; o gNB tentará conectar e estabelecerá quando o srsUE subir.
@@ -185,9 +185,9 @@ sudo ip netns add ue1
 
 ## 6. Arquivos de apoio
 
-- **gNB ZMQ:** `gNB_tradicional/configs/gnb-zmq-srsue.yml` — band 3, SCS 15, ru_sdr ZMQ.
-- **srsUE:** `gNB_tradicional/configs/ue_srsue.conf` ou `gNB_desagregated/configs/ue_srsue.conf` — ZMQ, USIM e NR alinhados ao subscriber 208930000000001.
-- **RAN desagregada (CU/DU):** `gNB_desagregated` — `./scripts/up.sh` (padrão: `CU_AUTO_START=0`, `DU_AUTO_START=0`). **`./scripts/start-cu.sh`** → **srsUE** (`gNB_desagregated/configs/ue_srsue.conf`, ZMQ **2002/2003**) → **`./scripts/start-du-after-ue.sh`** — ver `gNB_desagregated/README.md`, `gNB_desagregated/configs/ZMQ_PORTS.md` e `gNB_desagregated/docs/CU_DU_CONEXAO.md`.
+- **gNB ZMQ:** `gNB_traditional/configs/gnb-zmq-srsue.yml` — band 3, SCS 15, ru_sdr ZMQ.
+- **srsUE:** `gNB_traditional/configs/ue_srsue.conf` ou `gNB_disaggregated/configs/ue_srsue.conf` — ZMQ, USIM e NR alinhados ao subscriber 208930000000001.
+- **RAN desagregada (CU/DU):** `gNB_disaggregated` — `./scripts/up.sh` (padrão: `CU_AUTO_START=0`, `DU_AUTO_START=0`). **`./scripts/start-cu.sh`** → **srsUE** (`gNB_disaggregated/configs/ue_srsue.conf`, ZMQ **2002/2003**) → **`./scripts/start-du-after-ue.sh`** — ver `gNB_disaggregated/README.md`, `gNB_disaggregated/configs/ZMQ_PORTS.md` e `gNB_disaggregated/docs/CU_DU_CONEXAO.md`.
 
 ---
 

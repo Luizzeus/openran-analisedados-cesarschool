@@ -2,8 +2,6 @@
 
 Guia prático para **E2SM-RC**, **E2SM-KPM** e **custom SMs** no gNB OAI monolítico (RFSIM).
 
-> **Projeto `oai-cn-gnb-nonrt-nearrt`:** testes de SM na **Fase 1** (FlexRIC). Índice completo: [FASES_ORAN_LAB.md](FASES_ORAN_LAB.md).
-
 ## Mapa de capacidades
 
 | SM | O-RAN / Custom | O que expõe | xApp | Funciona no lab (222/123)? |
@@ -50,7 +48,7 @@ Testar com `xapp_kpm_rc` (monitor KPM + envia RC Control). O controlo real no RA
 ## Scripts de exploração
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb
 
 # Lab no ar
 ./scripts/up_e2_lab.sh

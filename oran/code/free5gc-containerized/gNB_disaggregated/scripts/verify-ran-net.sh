@@ -26,4 +26,4 @@ fi
 
 echo ""
 echo "Nos logs do AMF, o endereço do RAN deve coincidir com o IP do CU (10.100.200.51)."
-echo "Se vir 10.100.200.11 ou outro, recrie: cd gNB_desagregated && ./scripts/down.sh && ./scripts/up.sh"
+echo "Se vir 10.100.200.11 ou outro, recrie: cd gNB_disaggregated && ./scripts/down.sh && ./scripts/up.sh"

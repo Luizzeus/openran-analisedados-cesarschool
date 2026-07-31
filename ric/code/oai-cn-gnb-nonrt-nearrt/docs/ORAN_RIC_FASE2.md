@@ -20,7 +20,7 @@ Stack **nearRT O-RAN SC** (`oran-sc-ric`) com gNB OAI em E2 porta **36422**, opc
 ## Início rápido
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb-nonrt-nearrt
 
 # 1. Compilar gNB com E2 :36422 (binário separado)
 ./scripts/build_e2_oran_sc.sh

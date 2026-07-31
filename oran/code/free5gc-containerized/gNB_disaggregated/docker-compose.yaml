@@ -3,7 +3,7 @@ services:
     build:
       context: ../core
       dockerfile: Dockerfile.srsRAN
-    image: srsran-gnb:local
+    image: "${SRSRAN_IMAGE:-srsran-gnb:local}"
     container_name: srsran-cu
     hostname: srsran-cu
     environment:
@@ -23,7 +23,7 @@ services:
     restart: "no"
 
   srsran-du:
-    image: srsran-gnb:local
+    image: "${SRSRAN_IMAGE:-srsran-gnb:local}"
     container_name: srsran-du
     hostname: srsran-du
     environment:

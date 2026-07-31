@@ -15,7 +15,7 @@ Laboratório 5G Standalone (SA) com **free5GC** (core) e **srsRAN Project** (RAN
 |--------|--------|
 | **`core/`** | free5GC (AMF, SMF, UPF, NRF, …) — `docker-compose.yaml` só do core |
 | **`gNB_traditional/`** | gNB monolítico (`gnb`) — IP **10.100.200.50** |
-| **`gNB_desagregated/`** | Split CU/DU (`srscu` + `srsdu`, F1) — CU **.51**, DU **.52** |
+| **`gNB_disaggregated/`** | Split CU/DU (`srscu` + `srsdu`, F1) — CU **.51**, DU **.52** |
 | **`gNB_open/`** | Mesmo split + **Open Fronthaul** (RU emulada, rede `ofhnet`) — mesmos IPs **.51** / **.52** que o desagregado (não usar os dois *stacks* em paralelo) |
 
 ## Início rápido
@@ -23,13 +23,14 @@ Laboratório 5G Standalone (SA) com **free5GC** (core) e **srsRAN Project** (RAN
 ```bash
 # 1) Core (cria a rede free5gc-privnet)
 cd core
+./scripts/validate-ran-stacks.sh  # pré-check dos 3 perfis RAN
 ./scripts/up.sh
 ./scripts/add-subscriber.sh    # necessário para UE / sessão PDU
 
-# 2) RAN — escolha UMA stack CU/DU se usar split: gNB_desagregated OU gNB_open (não ambas).
+# 2) RAN — escolha UMA stack CU/DU se usar split: gNB_disaggregated OU gNB_open (não ambas).
 #    Monolítico gNB_traditional pode coexistir com uma stack CU/DU (gnb_id distinto).
 cd ../gNB_traditional && ./scripts/up.sh
-# ou: cd ../gNB_desagregated && ./scripts/up.sh
+# ou: cd ../gNB_disaggregated && ./scripts/up.sh
 # ou: cd ../gNB_open && DU_CONFIG=du-ofh-ru-emulator.yml CU_AUTO_START=1 DU_AUTO_START=1 RU_AUTO_START=1 ./scripts/up.sh
 
 # 3) Verificações (sempre a partir de core/)
@@ -45,7 +46,7 @@ cd ../core
 # primeiro a RAN
 cd gNB_traditional && ./scripts/down.sh
 # ou
-cd gNB_desagregated && ./scripts/down.sh
+cd gNB_disaggregated && ./scripts/down.sh
 # ou
 cd gNB_open && ./scripts/down.sh
 
@@ -70,7 +71,7 @@ free5gc-containerized/
 │   └── scripts/
 │       ├── up.sh
 │       └── down.sh
-├── gNB_desagregated/
+├── gNB_disaggregated/
 │   ├── docker-compose.yaml       # srsran-cu @ .51 + srsran-du @ .52
 │   ├── configs/ (cu.yml, du.yml, …)   logs/
 │   └── scripts/

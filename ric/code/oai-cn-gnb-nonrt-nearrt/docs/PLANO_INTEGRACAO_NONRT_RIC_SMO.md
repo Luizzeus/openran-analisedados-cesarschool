@@ -1,9 +1,9 @@
 # Plano de integração — nonRT RIC + SMO + nearRT RIC (O-RAN SC) + pilha OAI
 
-Documento de **planeamento e viabilidade** para o projeto `oai-cn-gnb-nonrt-nearrt` (disciplina **RIC / Open RAN**, Cesar School).
+Documento de **planeamento e viabilidade** para o projeto `oai-cn-gnb-nonrt-nearrt`.
 
 **Data:** Jun 2026  
-**Estado atual do repositório:** lab OAI funcional com **nearRT-RIC FlexRIC** (Fase 1), **nonRT RIC com A1 simulators** (Fase 1), base **nearRT O-RAN SC + A1 real** (Fase 2) e **SMO local com O1/VES/KPM, armazenamento e IA/ML** (Fase 3).
+**Estado atual do repositório:** lab OAI funcional com **nearRT-RIC FlexRIC** (Fase 1), **nonRT RIC com A1 simulators** (Fase 1), base **nearRT O-RAN SC + A1 real** (Fase 2) e scaffold inicial **SMO/OAM** (Fase 3).
 
 ---
 
@@ -42,13 +42,14 @@ Core OAI (Docker, UPF-VPP)  →  gNB/nrUE RFSIM (host)  →  E2AP :36421  →  F
 |------|--------------|----------------------|
 | Fase 1 | nonRT RIC com A1 simulators + FlexRIC E2/xApps | `config/nonrtric/`, `up_e2_lab.sh`, `test_nonrt_ric.sh`, `explore_e2_sm.sh` |
 | Fase 2 | nearRT O-RAN SC base + A1 Mediator + gNB E2 `:36422` | `config/oran-ric/`, `up_oai_oran_lab.sh`, `build_e2_oran_sc.sh`, `test_oran_ric.sh` |
-| Fase 3 | SMO local isolado com O1/VES/KPM, storage e IA/ML | `config/smo/docker-compose.yml`, `config/smo/smo_lab/`, `up_smo_lab.sh`, `test_smo_lab.sh`, `run_smo_ml_workflow.sh`, `docs/FASE3_SMO_OAM.md` |
+| Fase 3 | Scaffold SMO/OAM isolado | `config/smo/env.example`, `up_smo_lab.sh`, `test_smo_lab.sh`, `docs/FASE3_SMO_OAM.md` |
 
 ### Lacunas atuais
 
 - rApps reais consumindo KPM e emitindo policies A1 de forma automatizada.
 - O1 real no gNB OAI monolítico.
-- TEIV/topologia oficial O-RAN SC completa validada end-to-end.
+- SMO/OAM completo embutido no repositório; a Fase 3 usa checkout externo via `SMO_OAM_DIR`.
+- TEIV/topologia completa validada end-to-end.
 
 ---
 
@@ -202,24 +203,21 @@ SMO L-release inclui **TEIV** (Topology Exposure) em compose separado (`smo/teiv
 
 ---
 
-### Fase 3 — SMO local + interfaces abertas + dados + IA/ML (implementada)
+### Fase 3 — SMO OAM + topologia completa (2–4 semanas)
 
-**Objetivo:** SMO deployado no proprio repositorio; O1/VES/KPM por interfaces
-abertas; armazenamento local; workflow IA/ML para recomendacoes operacionais.
+**Objetivo:** SMO deployado; O1 com simuladores; visão “management plane” integrada.
 
 | Item | Ação |
 |------|------|
-| SMO API | `smo-api` com `/o1/v1/nodes`, `/ves/v7/events`, `/metrics/kpm`, `/ml/runs` |
-| O1/VES | `o1-sim` publica O-DU/O-RU/nearRT e eventos VES |
-| KPM | `kpm-collector` ingere logs KPM das Fases 1/2 |
-| Storage | SQLite persistente no volume `oai-smo-lab-data` |
-| IA/ML | `ml-workflow` gera recomendacoes por baseline de throughput/PRB |
-| Orquestração | `up_smo_lab.sh`, `test_smo_lab.sh`, `down_smo_lab.sh` |
+| SMO common | Kafka + Keycloak + Zookeeper (`smo/common`) |
+| SMO OAM | SDNC + VES collector (`smo/oam`) |
+| TEIV (opcional) | Topology inventory L-release |
+| Simuladores | `ntsim-ng` O-DU/O-RU para O1 (`network/`) |
+| Orquestração | `up_smo_lab.sh` com ordem de dependências |
 
 **Limitação:** gNB OAI monolítico **não** expõe O1 NETCONF nativo — O1 será com simuladores, não com o gNB real.
 
-**Modo externo:** `SMO_MODE=external` permite usar checkout O-RAN SC OAM via
-`SMO_OAM_DIR` quando for necessario testar SDNC/Keycloak/Kafka/TEIV oficiais.
+**Alternativa produção:** `it/dep` `smo-install` em cluster K8s dedicado (não multicluster Kind do SD-RAN).
 
 ---
 
@@ -232,13 +230,12 @@ abertas; armazenamento local; workflow IA/ML para recomendacoes operacionais.
 | Atual (Core + FlexRIC + gNB) | 8 GB | 4 cores | 15 GB |
 | + Fase 1 (nonRT) | 12 GB | 6 cores | 25 GB |
 | + Fase 2 (oran-sc-ric) | 16 GB | 8 cores | 35 GB |
-| + Fase 3 local | 12–16 GB | 6+ cores | 30 GB |
-| + Fase 3 O-RAN SC OAM externo | 24–32 GB | 8+ cores | 50 GB |
+| + Fase 3 (SMO full) | 24–32 GB | 8+ cores | 50 GB |
 
 ### Software
 
 - Docker 24+ / Compose v2
-- (Fase 3+) Python 3 para scripts e Docker Compose local
+- (Fase 3+) Python 3 para scripts OAM `config.py`
 - (Opcional Fase 3 K8s) cluster single-node Kind ou k3s — **separado** do lab SD-RAN
 
 ### Portas a reservar
@@ -249,8 +246,7 @@ abertas; armazenamento local; workflow IA/ML para recomendacoes operacionais.
 | O-RAN SC E2AP | **36422** |
 | E42 / xApp (FlexRIC) | 36422 (conflito nome — hosts distintos ou stacks mutuamente exclusivos) |
 | A1 (PMS) | 8080, 8433 (varia por release) |
-| SMO local API | 18080 por padrao (`SMO_API_PORT`) |
-| SMO Keycloak externo | 8080 (conflito — usar profiles ou portas remapeadas) |
+| SMO Keycloak | 8080 (conflito — usar profiles ou portas remapeadas) |
 | Kafka | 9092 |
 
 > **Importante:** FlexRIC e `oran-sc-ric` **não devem** correr em simultâneo na mesma máquina sem remapear portas — usar perfis `RIC_STACK=flexric|oran-sc`.
@@ -279,7 +275,7 @@ abertas; armazenamento local; workflow IA/ML para recomendacoes operacionais.
 | OAI E2 agent | ONOS SD-RAN nearRT | ⚠️ Não testado aqui | outro stack (Helm/k8s) |
 | FlexRIC nearRT | nonRT A1 PMS | ❌ | Sem A1 no FlexRIC |
 | oran-sc-ric nearRT | nonRT PMS | ✅ Esperado | configurar A1 endpoint |
-| SMO local | gNB OAI | ⚠️ Parcial | O1 via simuladores; KPM via logs de xApps reais |
+| SMO OAM | gNB OAI | ⚠️ Parcial | O1 via simuladores, não gNB real |
 | SMO OAM | nonRT RIC | ✅ | via `it/dep` / compose integrado |
 
 ---
@@ -307,11 +303,9 @@ Semana 4+
 ├── docs/FASE3_SMO_OAM.md
 ├── scripts/up_smo_lab.sh / down_smo_lab.sh / test_smo_lab.sh
 ├── config/smo/env.example
-├── config/smo/docker-compose.yml
-├── config/smo/smo_lab/
-├── scripts/run_smo_ml_workflow.sh
-├── Validar O1/VES/KPM/storage/IA-ML local
-└── (Opcional) PoC O-RAN SC OAM externo com SMO_MODE=external
+├── Integrar checkout O-RAN SC OAM via SMO_OAM_DIR
+├── Validar topologia O1 + ntsim-ng
+└── (Opcional) PoC it/dep standalone-nonrtric em Kind isolado
 ```
 
 ---
@@ -339,8 +333,8 @@ A integração **é viável e faz sentido** neste repositório, com estas condi�
 
 1. **Não é um único `docker compose up`** — são 3 planos (Core, RIC/SMO, RAN host) coordenados por scripts.
 2. **“Stack completa” O-RAN** (SMO + nonRT + nearRT + A1 + E2) exige **substituir FlexRIC por nearRT O-RAN SC** na Fase 2; FlexRIC sozinho não fecha A1.
-3. **SMO com O1 real no gNB OAI** não é realista no curto prazo; a Fase 3 usa simuladores O1 e coleta KPM real por logs/API.
+3. **SMO com O1 real no gNB OAI** não é realista no curto prazo; usar simuladores O-DU ou documentar como limitação.
 4. **Kind multicluster** do projeto SD-RAN permanece **fora de escopo**; K8s só se necessário para `it/dep` full, em cluster **isolado**.
 5. O caminho de **menor risco** permanece por fases isoladas: Fase 1 para FlexRIC/nonRT simulado, Fase 2 para O-RAN SC/A1 real e Fase 3 para SMO/OAM.
 
-**Próximo passo sugerido:** conectar a recomendacao do `ml-workflow` a uma rApp/nonRT policy A1 e validar se um xApp nearRT aplica a acao E2.
+**Próximo passo sugerido:** fixar o checkout/release O-RAN SC OAM usado por `SMO_OAM_DIR`, validar `test_smo_lab.sh --preflight` e depois adicionar um teste O1 mínimo com simuladores.

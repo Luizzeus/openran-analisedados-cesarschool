@@ -34,9 +34,7 @@ if [ ! -f "$AGENT_API" ]; then
     exit 1
 fi
 
-# Backup e patch temporário da porta E2. O build O-RAN SC usa a mesma árvore
-# ran_build/build do OAI; por isso restauramos a porta FlexRIC e recompilamos o
-# binário base ao final, salvo se SKIP_RESTORE_FLEX_BUILD=1.
+# Backup e patch temporário da porta E2
 BACKUP="$AGENT_API.bak_oran_sc_build"
 if [ ! -f "$BACKUP" ]; then
     cp "$AGENT_API" "$BACKUP"
@@ -59,17 +57,6 @@ cd "$BUILD_DIR"
 
 cp -f "$RAN_BUILD/nr-softmodem" "$ORAN_BIN_DIR/nr-softmodem-oran-sc"
 cp -f "$RAN_BUILD/nr-uesoftmodem" "$ORAN_BIN_DIR/nr-uesoftmodem"
-
-restore_agent_api
-
-if [ "${SKIP_RESTORE_FLEX_BUILD:-0}" != "1" ]; then
-    echo ""
-    echo "Restaurando build base FlexRIC (porta $E2_PORT_FLEX)..."
-    ./build_oai --ninja --gNB --nrUE --build-e2 -w SIMU -c \
-        --cmake-opt "-DE2AP_VERSION=${E2AP_VERSION}" \
-        --cmake-opt "-DKPM_VERSION=${KPM_VERSION}" \
-        2>&1 | tee -a "$LOG_FILE"
-fi
 
 echo ""
 echo "Build O-RAN SC concluído."

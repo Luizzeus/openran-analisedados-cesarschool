@@ -7,7 +7,7 @@ Guia prático para as funcionalidades principais do **nonRT RIC O-RAN SC** (PMS,
 ## Início rápido
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb-nonrt-nearrt
 
 ./scripts/up_nonrt_ric.sh
 ./scripts/explore_nonrt_ric.sh full

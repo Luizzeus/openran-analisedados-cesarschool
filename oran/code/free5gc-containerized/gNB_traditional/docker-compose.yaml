@@ -3,7 +3,7 @@ services:
     build:
       context: ../core
       dockerfile: Dockerfile.srsRAN
-    image: srsran-gnb:local
+    image: "${SRSRAN_IMAGE:-srsran-gnb:local}"
     container_name: srsran-gnb-tradicional
     hostname: srsran-gnb-tradicional
     environment:

@@ -7,7 +7,7 @@ Laboratório completo de rede 5G Core usando free5GC totalmente containerizado.
 Este projeto implementa uma arquitetura completa de 5G Core Network usando free5GC, incluindo:
 - **Control Plane**: NRF, AMF, SMF, AUSF, UDM, UDR, PCF, NSSF
 - **User Plane**: UPF
-- **RAN**: srsRAN Project — compose em `../gNB_tradicional` ou `../gNB_desagregated` (rede compartilhada `free5gc-privnet`); UE: srsUE (srsRAN 4G) opcional
+- **RAN**: srsRAN Project — compose em `../gNB_traditional` ou `../gNB_disaggregated` (rede compartilhada `free5gc-privnet`); UE: srsUE (srsRAN 4G) opcional
 - **Aplicações**: WebUI, NEF, CHF
 - **Interworking**: N3IWF, TNGF
 
@@ -23,7 +23,7 @@ Este script:
 - Inicia os serviços **do core** na ordem correta (não inclui gNB)
 - Verifica e corrige problemas do UPF
 - Adiciona subscriber automaticamente
-- Indica como subir a RAN em `../gNB_tradicional` ou `../gNB_desagregated`
+- Indica como subir a RAN em `../gNB_traditional` ou `../gNB_disaggregated`
 
 ### 2. Verificar Saúde
 

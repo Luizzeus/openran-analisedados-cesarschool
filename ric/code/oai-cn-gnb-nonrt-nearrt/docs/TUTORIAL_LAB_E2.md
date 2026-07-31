@@ -2,8 +2,6 @@
 
 Guia passo a passo para reproduzir o laboratório **5G SA nativo** (Core Docker + gNB/nrUE RFSIM + nearRT-RIC + xApps) com testes de **Service Models E2** (custom, RC, KPM).
 
-> **No projeto `oai-cn-gnb-nonrt-nearrt`:** este tutorial corresponde à **Fase 1** (nearRT FlexRIC). Para nonRT RIC, O-RAN SC e SMO/OAM, ver [FASES_ORAN_LAB.md](FASES_ORAN_LAB.md) e o [README](../README.md).
-
 > **Escopo:** este lab corre no **host** (Docker só para o Core). **Não** utiliza Kind multicluster nem integração com SD-RAN/Aether.
 
 ---
@@ -73,7 +71,7 @@ Documentação complementar:
 ### 4.1 Clonar / entrar no projeto
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb
 ```
 
 ### 4.2 Instalar dependências OAI
@@ -392,7 +390,7 @@ Não usar para KPM neste lab — filtro SST=1 por defeito. Usar `./scripts/test_
 ## 11. Sequência mínima de reprodução (checklist)
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb
 
 # Build (uma vez)
 ./scripts/build_e2.sh
@@ -425,4 +423,4 @@ grep 'E2 SETUP RESPONSE' logs/gnb_oai.log
 
 ---
 
-*Documento gerado com base nos testes executados em Jun/2026 no host de desenvolvimento do projeto `oai-cn-gnb-nonrt-nearrt` (disciplina RIC / Open RAN · Cesar School).*
+*Documento gerado com base nos testes executados em Jun/2026 no host de desenvolvimento do projeto `oai-cn-gnb` (RNP Failover / CERISE).*

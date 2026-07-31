@@ -2,7 +2,7 @@
 
 **Disciplina:** RAN Intelligent Controller (RIC) · **Aulas 02 e 03**
 
-**Código:** `modulo07-ric/code/open5gs-container-srsRAN/`
+**Código:** `ric/code/open5gs-container-srsRAN/`
 
 ## Objetivos
 
@@ -16,7 +16,7 @@
 |-------|-----|-------|-------------------|
 | `open5gs-containerized` | UERANSIM | Simulado (sem PHY OAI) | Aula 01 — N1/N2/N3 |
 | `open5gs-container-srsRAN` | srsRAN gNB + srsUE | **ZMQ** (IQ entre processos) | Aulas 02–03 — RAN “real” em SW |
-| `oai-cn-gnb` | OAI gNB + nrUE | RFSIM ou RF | Aulas 04–06 — E2 + FlexRIC |
+| `oai-cn-gnb-e2` | OAI gNB + nrUE | RFSIM ou RF | Aulas 04–06 — E2 + FlexRIC |
 
 O enlace **ZMQ** entre gNB e UE exige **ordem de subida**: o gNB deve transmitir antes do UE; reiniciar só um lado dessincroniza o par.
 
@@ -29,7 +29,7 @@ O enlace **ZMQ** entre gNB e UE exige **ordem de subida**: o gNB deve transmitir
 
 1. Entrar no diretório:
    ```bash
-   cd modulo07-ric/code/open5gs-container-srsRAN
+   cd ric/code/open5gs-container-srsRAN
    ```
 2. Subir o core Open5GS:
    ```bash

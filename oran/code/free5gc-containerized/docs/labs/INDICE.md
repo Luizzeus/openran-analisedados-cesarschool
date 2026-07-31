@@ -8,10 +8,10 @@ Roteiros para execução em sala ou autonomamente e para elaboração do **relat
 |---------|--------|---------|-----------------|
 | **Core 5GC** apenas | `core/` | [01](01-core-5gc.md) | NRF, AMF, SMF, UPF, subscriber |
 | **gNB tradicional** (monólito) | `gNB_traditional/` | [02](02-ran-tradicional-n2-n3.md) | Um container `gnb`; N2/N3; srsUE opcional (ZMQ) |
-| **gNB desagregado** (split CU/DU, F1) | `gNB_desagregated/` | [03](03-ran-aberta-cu-du.md) | Dois containers; N2 no CU; F1 entre CU e DU |
+| **gNB desagregado** (split CU/DU, F1) | `gNB_disaggregated/` | [03](03-ran-aberta-cu-du.md) | Dois containers; N2 no CU; F1 entre CU e DU |
 | **gNB aberto** O-RAN (CU/DU + **Open Fronthaul**) | `gNB_open/` | [05](05-ran-open-fronthaul-o-ran.md) | CU + DU + **RU emulada**; rede `ofhnet` |
 
-**Nota:** `gNB_desagregated` e `gNB_open` **não** podem estar ativos ao mesmo tempo (mesmos nomes de contentores e IPs `.51`/`.52` na `free5gc-privnet`). O monolítico `gNB_traditional` pode coexistir com um deles (IDs e portas ZMQ distintos).
+**Nota:** `gNB_disaggregated` e `gNB_open` **não** podem estar ativos ao mesmo tempo (mesmos nomes de contentores e IPs `.51`/`.52` na `free5gc-privnet`). O monolítico `gNB_traditional` pode coexistir com um deles (IDs e portas ZMQ distintos).
 
 | Documento | Conteúdo |
 |-----------|----------|

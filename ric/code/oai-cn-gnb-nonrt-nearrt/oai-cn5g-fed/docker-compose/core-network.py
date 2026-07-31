@@ -21,7 +21,6 @@ For more information about the OpenAirInterface (OAI) Software Alliance:
 ------------------------------------------------------------------------------
 """
 
-import yaml
 import re
 import subprocess
 import time

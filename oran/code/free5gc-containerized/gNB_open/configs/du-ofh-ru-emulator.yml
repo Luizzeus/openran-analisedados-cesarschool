@@ -1,10 +1,13 @@
 # srsDU — split F1 + O-RAN Open Fronthaul (Split 7.2) com RU emulada (ru_emulator)
-# CU-CP: 10.100.200.51 | DU (privnet): 10.100.200.52 | OFH: interface extra (eth1)
+# CU-CP: 10.100.200.51 | DU (privnet): 10.100.200.52 | OFH: interface com MAC 02:00:00:00:01:02
 #
 # Este perfil é focado em laboratório:
-# - A interface OFH é uma rede Docker dedicada (`ofhnet`) ligada ao DU como `eth1`.
+# - A interface OFH é uma rede Docker dedicada (`ofhnet`) ligada ao DU.
 # - O RU é o serviço `srsran-ru` (ru_emulator) na mesma `ofhnet`.
 # - MACs abaixo devem bater com as MACs reais vistas no runtime (ver scripts/verify-ofh.sh).
+
+gnb_id: 412
+gnb_id_bit_length: 22
 
 f1ap:
   cu_cp_addr: 10.100.200.51
@@ -36,7 +39,7 @@ ru_ofh:
   enable_dl_static_compr_hdr: true
   iq_scaling: 1.0
   cells:
-    - network_interface: eth1
+    - network_interface: eth0
       # MAC do RU e do DU no link OFH.
       ru_mac_addr: "02:00:00:00:01:01"
       du_mac_addr: "02:00:00:00:01:02"
@@ -67,4 +70,3 @@ pcap:
   f1ap_filename: /logs/du_ofh_f1ap.pcap
   f1u_enable: true
   f1u_filename: /logs/du_ofh_f1u.pcap
-

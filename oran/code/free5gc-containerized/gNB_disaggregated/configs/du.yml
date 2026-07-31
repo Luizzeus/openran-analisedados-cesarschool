@@ -1,6 +1,9 @@
 # srsDU — split O-RAN (F1-C / F1-U) com RU simulado (sem SDR)
 # CU-CP: 10.100.200.51 | este DU: 10.100.200.52
 
+gnb_id: 412
+gnb_id_bit_length: 22
+
 f1ap:
   cu_cp_addr: 10.100.200.51
   bind_addr: 10.100.200.52

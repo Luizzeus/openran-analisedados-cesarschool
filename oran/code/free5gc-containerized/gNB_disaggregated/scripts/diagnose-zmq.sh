@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Diagnóstico rápido ZMQ (gNB_desagregated): rede Docker, portas no host, teste ao UL a partir do DU.
+# Diagnóstico rápido ZMQ (gNB_disaggregated): rede Docker, portas no host, teste ao UL a partir do DU.
 set -euo pipefail
 NET="${1:-free5gc-privnet}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -12,7 +12,7 @@ echo "=== Contentores srsran-* ==="
 docker ps -a --filter name=srsran --format '{{.Names}}	{{.Status}}'
 
 echo ""
-echo "=== Portas TCP no host (2002 DL / 2003 UL gNB_desagregated) ==="
+echo "=== Portas TCP no host (2002 DL / 2003 UL gNB_disaggregated) ==="
 ss -tlnH 2>/dev/null | grep -E ':200[23]\s' || echo "(nada à escuta ou ss indisponível)"
 
 echo ""

@@ -2,10 +2,10 @@
 
 **Disciplina:** RAN Intelligent Controller (RIC)  
 **Encontro:** Aula 04 · **21:00–22:00** (após intervalo)  
-**Código:** `modulo07-ric/code/oai-cn-gnb/`  
+**Código:** `ric/code/oai-cn-gnb-e2/`  
 **Pré-requisito:** build concluído (`build_e2.sh` + `build_flexric_tools.sh`)
 
-Guias de apoio: [E2_FLEXRIC.md](../../code/oai-cn-gnb/docs/E2_FLEXRIC.md) · [E2_SERVICE_MODELS.md](../../code/oai-cn-gnb/docs/E2_SERVICE_MODELS.md)
+Guias de apoio: [E2_FLEXRIC.md](../../../E2_FLEXRIC.md) · [E2_SERVICE_MODELS.md](../../../E2_SERVICE_MODELS.md)
 
 ---
 
@@ -36,12 +36,12 @@ Ao final deste bloco, cada grupo deve ter:
 
 - Retomar arquitetura no quadro: Core → gNB (E2 agent) → FlexRIC → xApp.
 - Mostrar slide **fluxo E2 no ciclo de vida** (SETUP → subscribe → INDICATION).
-- Abrir terminal em `code/oai-cn-gnb`.
+- Abrir terminal em `ric/code/oai-cn-gnb-e2`.
 
 ### 5–15 min — Subir o laboratório
 
 ```bash
-cd modulo07-ric/code/oai-cn-gnb
+cd ric/code/oai-cn-gnb-e2
 ./scripts/up_e2_lab.sh
 ```
 

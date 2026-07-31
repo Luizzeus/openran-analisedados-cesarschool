@@ -2,7 +2,7 @@
 
 **Disciplina:** RAN Intelligent Controller (RIC) · **Aula 01**
 
-**Código:** `modulo07-ric/code/open5gs-containerized/`
+**Código:** `ric/code/open5gs-containerized/`
 
 ## Objetivos
 
@@ -19,7 +19,7 @@
 
 1. Entrar no diretório do lab:
    ```bash
-   cd modulo07-ric/code/open5gs-containerized
+   cd ric/code/open5gs-containerized
    ```
 2. Subir o **core** (SBI) primeiro:
    ```bash

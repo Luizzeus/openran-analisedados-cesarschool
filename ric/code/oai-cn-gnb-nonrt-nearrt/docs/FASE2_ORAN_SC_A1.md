@@ -108,21 +108,6 @@ Parar:
 ./scripts/down_oai_oran_lab.sh
 ```
 
-## Ordem de validacao
-
-| Ordem | Teste | Quando usar | Sucesso esperado |
-|-------|-------|-------------|------------------|
-| 1 | `./scripts/test_oran_ric.sh` | Sempre, logo apos subir a Fase 2 | containers `ric_*` ativos, A1 mediator TCP `:10000 OK`, RNIB/Redis acessivel |
-| 2 | `KPM_TRAFFIC=1 ./scripts/run_xapp_oai_kpm.sh` | Principal evidencia KPM da Fase 2 | `RIC Indication` com `DRB.UEThpDl` e `DRB.UEThpUl` |
-| 3 | `./scripts/test_oran_ric.sh --run-xapp` | Smoke test curto do runner O-RAN SC | xApp sem `503` e com atividade KPM |
-| 4 | `./scripts/explore_oran_ric.sh full` | Diagnostico/exploracao de A1, E2, RNIB e xApp | resumo completo da stack |
-| 5 | `./scripts/get_oran_e2_node_id.sh` | Quando o xApp precisar do node ID ou o RNIB estiver suspeito | `gnb_208_095_00000e00` ou ID equivalente |
-| 6 | `./scripts/fix_oran_ric_rnib.sh` | Apenas quando RNIB/e2mgr/Redis ficam inconsistentes | stack O-RAN SC recriada parcialmente e pronta para novo gNB |
-
-Considere `test_oran_ric.sh --run-xapp` como smoke test. Para evidencia de KPM
-mais forte, use `run_xapp_oai_kpm.sh`, que foi ajustado para o gNB OAI, KPM
-Style 4 e S-NSSAI `222/123`.
-
 ## Verificacoes importantes
 
 E2:
@@ -191,8 +176,6 @@ para manter a saida ASCII.
 - Nao rode FlexRIC em paralelo.
 - Fase 2 nao deve sobrescrever o build da Fase 1; use o binario separado criado
   por `build_e2_oran_sc.sh`.
-- Se `test_oran_ric.sh --run-xapp` retornar sucesso mas o log contiver `503`,
-  trate como validacao parcial e rode `run_xapp_oai_kpm.sh` apos reiniciar o gNB.
 
 ## Voltar para Fase 1
 

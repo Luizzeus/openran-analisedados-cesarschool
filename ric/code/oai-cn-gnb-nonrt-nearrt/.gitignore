@@ -19,6 +19,3 @@ logs/
 *.tar
 *.tar.gz
 *.zip
-
-# Python
-*/__pycache__/

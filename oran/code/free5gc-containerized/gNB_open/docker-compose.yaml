@@ -3,7 +3,7 @@ services:
     build:
       context: ../core
       dockerfile: Dockerfile.srsRAN
-    image: srsran-gnb:local
+    image: "${SRSRAN_IMAGE:-srsran-gnb:local}"
     container_name: srsran-cu
     hostname: srsran-cu
     environment:
@@ -23,7 +23,7 @@ services:
     restart: "no"
 
   srsran-du:
-    image: srsran-gnb:local
+    image: "${SRSRAN_IMAGE:-srsran-gnb:local}"
     container_name: srsran-du
     hostname: srsran-du
     environment:
@@ -66,7 +66,7 @@ services:
         condition: service_started
 
   srsran-ru:
-    image: srsran-gnb:local
+    image: "${SRSRAN_IMAGE:-srsran-gnb:local}"
     container_name: srsran-ru
     hostname: srsran-ru
     environment:
@@ -92,4 +92,3 @@ networks:
   ofhnet:
     name: gnb-open-ofhnet
     driver: bridge
-

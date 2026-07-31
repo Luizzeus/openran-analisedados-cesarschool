@@ -3,7 +3,7 @@
 # AMF:  10.100.200.16:38412
 # gNB:  10.100.200.50 (privnet)
 #
-# gnb_id 411 — RAN “tradicional”. Para rodar ao mesmo tempo que gNB_desagregated, o CU usa outro gnb_id.
+# gnb_id 411 — RAN “tradicional”. Para rodar ao mesmo tempo que gNB_disaggregated, o CU usa outro gnb_id.
 
 gnb_id: 411
 gnb_id_bit_length: 22

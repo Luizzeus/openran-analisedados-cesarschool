@@ -1,85 +1,110 @@
-# Fase 3 - SMO, interfaces abertas, dados e IA/ML
+# Fase 3 - SMO/OAM e topologia completa
 
 Guia de interpretacao associado:
 [INTERPRETACAO_FASE3_SMO_OAM.md](INTERPRETACAO_FASE3_SMO_OAM.md).
 
+Analise de viabilidade:
+[VIABILIDADE_FASE3_SMO_INTERFACES.md](VIABILIDADE_FASE3_SMO_INTERFACES.md).
+
 ## Objetivo
 
-A Fase 3 adiciona um plano SMO isolado para:
-
-- coletar dados por interfaces abertas de gestao e telemetria;
-- armazenar topologia, eventos VES e KPMs em banco local;
-- correlacionar dados O1/VES com KPMs das Fases 1/2;
-- conduzir um workflow IA/ML simples que gera recomendacoes operacionais.
-
-Ela nao substitui Fase 1 ou Fase 2. A Fase 3 pode rodar em paralelo porque usa
-porta propria no host, rede Docker propria e volume proprio.
+A Fase 3 inicia o plano de gestao O-RAN: SMO/OAM, O1 com simuladores,
+inventario/topologia e, opcionalmente, integracao com nonRT/nearRT ja validados.
+Ela nao substitui Fase 1 ou Fase 2; e uma camada adicional e isolada.
 
 ## Estado no projeto
 
 | Item | Estado |
 |------|--------|
-| Compose SMO local | Implementado em `config/smo/docker-compose.yml` |
-| API SMO aberta | Implementada em `smo-api` |
-| O1/topologia simulada | Implementada em `o1-sim` |
-| VES collector HTTP | Implementado em `/ves/v7/events` |
-| Coleta KPM Fase 1/2 | Implementada em `kpm-collector` lendo `logs/xapp_kpm_lab.log` e `logs/xapp_oai_kpm.log` |
-| Armazenamento | SQLite persistente no volume `oai-smo-lab-data` |
-| Workflow IA/ML | Implementado em `ml-workflow` e `scripts/run_smo_ml_workflow.sh` |
+| Documentacao de arquitetura | Implementada neste guia |
+| Scripts `up/down/test_smo_lab.sh` | Implementados com modo local e externo |
+| SMO-lite local | Implementado |
+| Compose SMO completo embutido no repo | Nao incluído |
 | O1 real para gNB OAI | Nao suportado pelo gNB monolitico |
-| Modo O-RAN SC OAM externo | Mantido via `SMO_MODE=external` |
+| O1 via simuladores O-DU/O-RU | Caminho recomendado |
+| Snapshot A1/E2/O1/O2/VES | Implementado |
+| Treino de baseline KPM | Implementado (rApp experimental) |
+| Inferencia e policy A1 em dry-run | Implementado |
+| Aplicacao no PMS | Implementada, opt-in com `--commit` |
+| Efeito A1 -> xApp -> E2 | Pendente de policy type/xApp consumidor |
 
-## Arquitetura
+Existem dois modos:
+
+| Modo | Uso | Custo |
+|------|-----|-------|
+| `SMO_MODE=local` | SMO-lite incluido no repo, snapshots e eventos simulados | leve |
+| `SMO_MODE=external` | checkout externo O-RAN SC OAM/SMO via `SMO_OAM_DIR` | pesado |
+
+O modo local e o padrao porque permite explorar as interfaces abertas sem baixar
+dezenas de imagens ou colidir com a Fase 2.
+
+## Conceitos
+
+| Conceito | Papel |
+|----------|-------|
+| SMO | Service Management and Orchestration; plano de gestao superior |
+| OAM | Operacao, administracao e manutencao |
+| O1 | Interface de gestao entre SMO e RAN/nearRT, tipicamente NETCONF/HTTP |
+| SDNC | Controller usado no OAM para configuracao/NETCONF |
+| VES Collector | Recebe eventos/telemetria VES |
+| Keycloak | Identidade/autenticacao para componentes SMO |
+| Kafka/Zookeeper | Barramento/eventos e dependencias comuns |
+| TEIV | Topology and Inventory; inventario/topologia |
+| NTSIM/ntsim-ng | Simuladores O-RU/O-DU para O1 quando nao ha equipamento real |
+
+## Arquitetura alvo
 
 ```text
-Fase 3 - SMO local
+                         Fase 3 - management plane
 
-  +----------------------+      REST/JSON       +----------------------+
-  | o1-sim               | -------------------> | smo-api              |
-  | O-DU/O-RU/nearRT sim |  O1 topology + VES   | O1, VES, KPM, ML API |
-  +----------------------+                      +----------+-----------+
-                                                          |
-  +----------------------+      REST/JSON                 | SQLite
-  | kpm-collector        | -------------------------------+
-  | logs Fase 1/Fase 2   |  KPM metrics
-  +----------------------+
-                                                          |
-  +----------------------+      REST/JSON                 |
-  | ml-workflow          | <-------------------------------+
-  | decisao IA/ML        |  KPM + topologia + eventos
-  +----------------------+
+  SMO/OAM ou SMO-lite
+  +-------------------------------------------------------------+
+  | local: snapshots + eventos VES simulados + inventario        |
+  | external: Keycloak/Kafka/SDNC/VES/TEIV O-RAN SC OAM          |
+  +----------------------------+--------------------------------+
+                               |
+                               v O1 / VES / topology / O2 local
+  Simuladores O1 / inventario
+  +-------------------------------------------------------------+
+  | ntsim-ng O-DU / O-RU / topology sources                     |
+  +-------------------------------------------------------------+
 
-Fase 1/Fase 2 continuam independentes:
-
-  Fase 1: FlexRIC :36421 + xApp KPM -> logs/xapp_kpm_lab.log
-  Fase 2: O-RAN SC :36422 + xApp KPM -> logs/xapp_oai_kpm.log
+  Planos ja existentes
+  +-------------------------------------------------------------+
+  | Fase 1: nonRT + FlexRIC, ou Fase 2: nonRT + O-RAN SC nearRT |
+  | Core OAI + gNB/nrUE + xApps/KPM                             |
+  +-------------------------------------------------------------+
 ```
 
-## Isolamento
+## Interfaces abertas exploradas
 
-| Recurso | Fase 3 |
-|---------|--------|
-| Compose project | `oai-smo-lab` |
-| Rede Docker | `oai-smo-lab-net` |
-| Volume | `oai-smo-lab-data` |
-| Porta no host | `SMO_API_PORT`, padrao `18080` |
-| Portas E2 | Nao usa `36421` nem `36422` |
-| Containers Fase 1/2 | Nao sao parados nem modificados |
+| Interface | Implementacao no lab | Artefatos |
+|-----------|----------------------|-----------|
+| O1 | simulado por `config/smo/topology.lab.json` e eventos OAM | `topology.lab.json`, `oam_events.jsonl` |
+| A1 | nonRT PMS e A1 Mediator da Fase 2 | `a1_pms_*.json`, `a1_mediator_*.txt/json` |
+| E2 | RNIB Redis/e2mgr e xApps KPM da Fase 2 | `e2_node_id.txt`, `e2_rnib_keys.txt`, `e2mgr_e2t_list.json` |
+| O2 | inventario Docker/host do lab | `o2_docker_inventory.txt` |
+| VES | eventos simulados timestampados | `logs/smo_lab_events.jsonl` |
 
-Se `18080` estiver ocupada:
+## Politica de isolamento
+
+No modo local, `up_smo_lab.sh` nao sobe containers e nao bloqueia Fase 1/Fase
+2. Esse e o modo recomendado para correlacionar Fase 3 com KPM/A1/E2 ja em
+execucao.
+
+No modo externo, `up_smo_lab.sh` aborta se detectar containers/processos de
+Fase 1 ou Fase 2 ativos. Isso e conservador: SMO completo costuma usar portas
+comuns como `8080`, `8181`, `8443`, `9092` e pode colidir com nonRT/nearRT.
+
+Para permitir execucao compartilhada:
 
 ```bash
-SMO_API_PORT=18081 ./scripts/up_smo_lab.sh
-SMO_API_PORT=18081 ./scripts/test_smo_lab.sh
+SMO_MODE=external SMO_ALLOW_SHARED_HOST=1 ./scripts/up_smo_lab.sh
 ```
 
-## Comandos principais
+Use isso apenas depois de revisar portas no compose externo.
 
-Preflight:
-
-```bash
-./scripts/test_smo_lab.sh --preflight
-```
+## Modo local - SMO-lite
 
 Subir:
 
@@ -87,16 +112,22 @@ Subir:
 ./scripts/up_smo_lab.sh
 ```
 
-Validar:
+Registrar um evento OAM/VES simulado:
+
+```bash
+./scripts/smo_lab_event.sh MAJOR sim_o_du_001 HighPrbUl "UL PRB acima do limiar"
+```
+
+Coletar snapshot das interfaces abertas:
+
+```bash
+./scripts/smo_lab_snapshot.sh
+```
+
+Testar:
 
 ```bash
 ./scripts/test_smo_lab.sh
-```
-
-Executar um ciclo IA/ML manual:
-
-```bash
-./scripts/run_smo_ml_workflow.sh
 ```
 
 Parar:
@@ -105,119 +136,172 @@ Parar:
 ./scripts/down_smo_lab.sh
 ```
 
-## Interfaces abertas
+O snapshot cria uma pasta `logs/smo_lab_<timestamp>/` com:
 
-API padrao:
+| Arquivo | Conteudo |
+|---------|----------|
+| `summary.txt` | resumo operacional |
+| `topology.lab.json` | topologia O1 simulada |
+| `a1_pms_rics.json` | RICs vistos pelo nonRT PMS |
+| `a1_mediator_health.txt` | health do A1 Mediator |
+| `e2_node_id.txt` | E2 node ID do gNB registrado |
+| `e2_rnib_keys.txt` | chaves RNIB Redis |
+| `e2mgr_e2t_list.json` | associacao e2mgr/e2term |
+| `o2_docker_inventory.txt` | inventario local de containers |
+| `oam_events.jsonl` | eventos OAM/VES simulados |
 
-```bash
-export SMO_API_URL=http://127.0.0.1:18080
-```
+## Modo externo - O-RAN SC OAM
 
-| Endpoint | Metodo | Papel |
-|----------|--------|-------|
-| `/health` | GET | Health check |
-| `/openapi` | GET | Descricao OpenAPI simplificada |
-| `/o1/v1/nodes` | GET/POST | Inventario/topologia O1 |
-| `/ves/v7/events` | GET/POST | Eventos VES |
-| `/metrics/kpm` | GET/POST | Metricas KPM coletadas dos xApps |
-| `/topology` | GET | Snapshot topologico + eventos recentes |
-| `/ml/runs` | GET/POST | Decisoes do workflow IA/ML |
+Use quando houver recursos de maquina e um checkout O-RAN SC OAM/SMO.
 
-Exemplos:
-
-```bash
-curl "$SMO_API_URL/health"
-curl "$SMO_API_URL/topology"
-curl "$SMO_API_URL/metrics/kpm?limit=20"
-curl "$SMO_API_URL/ml/runs?limit=5"
-```
-
-## Coleta de dados
-
-### O1/VES
-
-O container `o1-sim` publica periodicamente:
-
-- nodes O-DU/O-RU/nearRT-RIC em `/o1/v1/nodes`;
-- eventos VES de medicao em `/ves/v7/events`.
-
-Isso demonstra o plano de gestao por interfaces abertas sem prometer O1 nativo
-no gNB OAI.
-
-### KPM das Fases 1/2
-
-O container `kpm-collector` observa:
-
-- `logs/xapp_kpm_lab.log` da Fase 1;
-- `logs/xapp_oai_kpm.log` da Fase 2.
-
-Quando encontra linhas como:
-
-```text
-DRB.UEThpDl = 16.44 [kbps]
-RRU.PrbTotUl = 2 [%]
-```
-
-ele envia as amostras para `/metrics/kpm` e o `smo-api` persiste no SQLite.
-
-## Workflow IA/ML
-
-O `ml-workflow` roda periodicamente e usa uma baseline por limiar:
-
-| Entrada | Uso |
-|---------|-----|
-| `DRB.UEThpDl` | detecta throughput DL baixo |
-| `DRB.UEThpUl` | detecta throughput UL baixo |
-| `RRU.PrbTotUl` | detecta ocupacao UL elevada |
-| eventos/topologia | contexto operacional armazenado no SMO |
-
-Recomendacoes possiveis:
-
-| Recomendacao | Significado |
-|--------------|-------------|
-| `collect-more-data` | ainda nao ha dados suficientes |
-| `keep-current-policy` | KPIs dentro da baseline |
-| `investigate-low-downlink-throughput` | DL abaixo do limiar |
-| `investigate-low-uplink-throughput` | UL abaixo do limiar |
-| `scale-or-shift-uplink-load` | PRB UL acima do limiar |
-
-Limiar customizado:
+1. Obtenha um checkout O-RAN SC OAM/SMO fora deste repositório.
+2. Exporte o path:
 
 ```bash
-ML_THROUGHPUT_LOW_KBPS=10 ML_PRB_HIGH_PCT=70 ./scripts/up_smo_lab.sh
-```
-
-## Ordem recomendada de teste
-
-| Prioridade | Comando | O que valida |
-|------------|---------|--------------|
-| P0 | `./scripts/test_smo_lab.sh --preflight` | Compose, sintaxe Python e porta SMO |
-| P0 | `./scripts/up_smo_lab.sh` | SMO local, API, O1 sim, coletor KPM e ML workflow |
-| P0 | `./scripts/test_smo_lab.sh` | Health, ingestao O1/VES/KPM, topologia e dados ML |
-| P1 | `sudo ./scripts/test_e2_kpm.sh` + Fase 3 ativa | Coleta KPM real da Fase 1 pelo SMO |
-| P1 | `KPM_TRAFFIC=1 ./scripts/run_xapp_oai_kpm.sh` + Fase 3 ativa | Coleta KPM real da Fase 2 pelo SMO |
-| P1 | `./scripts/run_smo_ml_workflow.sh` | Ciclo IA/ML manual sobre dados armazenados |
-| P2 | `curl "$SMO_API_URL/openapi"` | Contrato de API para integracoes externas |
-
-## Modo externo O-RAN SC OAM
-
-O modo antigo continua disponivel quando for necessario testar um checkout
-oficial O-RAN SC OAM/SMO:
-
-```bash
-export SMO_MODE=external
 export SMO_OAM_DIR=/path/para/o-ran-sc-oam
-./scripts/test_smo_lab.sh --preflight
-./scripts/up_smo_lab.sh
-./scripts/down_smo_lab.sh
 ```
 
-Esse modo nao e usado por padrao porque exige muitas imagens, portas e memoria.
+3. Revise os compose files esperados:
+
+```bash
+ls "$SMO_OAM_DIR"/infra/docker-compose.yaml
+ls "$SMO_OAM_DIR"/smo/common/docker-compose.yaml
+ls "$SMO_OAM_DIR"/smo/oam/docker-compose.yaml
+```
+
+4. Rode preflight:
+
+```bash
+./scripts/test_smo_lab.sh --preflight
+```
+
+## Comandos
+
+Subir common + OAM:
+
+```bash
+SMO_MODE=external SMO_OAM_DIR=/path/para/o-ran-sc-oam ./scripts/up_smo_lab.sh
+```
+
+Subir tambem simuladores de rede/O1, se o checkout tiver `network/docker-compose.yaml`:
+
+```bash
+SMO_MODE=external SMO_WITH_NETWORK=1 SMO_OAM_DIR=/path/para/o-ran-sc-oam ./scripts/up_smo_lab.sh
+```
+
+Subir TEIV, se o checkout tiver `smo/teiv/docker-compose.yaml`:
+
+```bash
+SMO_MODE=external SMO_WITH_TEIV=1 SMO_OAM_DIR=/path/para/o-ran-sc-oam ./scripts/up_smo_lab.sh
+```
+
+Testar:
+
+```bash
+SMO_MODE=external SMO_OAM_DIR=/path/para/o-ran-sc-oam ./scripts/test_smo_lab.sh
+```
+
+Parar:
+
+```bash
+SMO_MODE=external SMO_OAM_DIR=/path/para/o-ran-sc-oam ./scripts/down_smo_lab.sh
+```
+
+## O que verificar
+
+| Verificacao | Sinal esperado |
+|-------------|----------------|
+| containers common | Kafka/Zookeeper/Keycloak ativos |
+| OAM | SDNC e VES collector ativos |
+| O1 simulado | containers NTSIM/O-DU/O-RU ativos |
+| VES | endpoint HTTP/HTTPS respondendo |
+| topologia | TEIV ou inventario com entidades simuladas |
+| isolamento | Fase 1/2 nao parada nem alterada automaticamente |
+
+## Cenario de demonstracao recomendado
+
+1. Suba a Fase 2 e valide E2/A1:
+
+```bash
+./scripts/up_oai_oran_lab.sh
+./scripts/test_oran_ric.sh
+```
+
+2. Inicie SMO-lite:
+
+```bash
+./scripts/up_smo_lab.sh
+```
+
+3. Gere baseline KPM em um terminal:
+
+```bash
+KPM_TRAFFIC=1 ./scripts/run_xapp_oai_kpm_extended.sh
+```
+
+4. Registre um evento OAM simulado:
+
+```bash
+./scripts/smo_lab_event.sh MAJOR sim_o_du_001 HighPrbUl "stress UL iniciado"
+```
+
+5. Rode stress/throughput:
+
+```bash
+UE_SOURCE=nrue ./scripts/test-vpp-throughput.sh
+```
+
+6. Colete snapshot:
+
+```bash
+./scripts/smo_lab_snapshot.sh
+```
+
+7. Correlacione timestamps de `oam_events.jsonl`, KPM do xApp e inventario A1/E2.
+
+## Relacao com KPM, rApps e xApps
+
+Fase 3 nao substitui xApps/KPM. Ela observa/gerencia o dominio por OAM/O1,
+enquanto:
+
+- KPM/E2 continua sendo observado por xApps da Fase 1 ou Fase 2;
+- policies A1 continuam vindo do nonRT;
+- O1 traz inventario, configuracao e eventos de gestao;
+- closed loop completo exige uma ponte de decisao: rApp/policy -> A1 -> xApp -> E2.
+
+KPMs que continuam relevantes ao correlacionar eventos SMO/OAM com trafego UE:
+
+| KPM | Unidade | Interpretacao na Fase 3 |
+|-----|---------|--------------------------|
+| `DRB.UEThpDl` / `DRB.UEThpUl` | `kbps` | throughput percebido pelo UE durante eventos ou mudancas de gestao |
+| `DRB.PdcpSduVolumeDL` / `DRB.PdcpSduVolumeUL` | `Mb` | volume de dados por DRB na janela KPM |
+| `DRB.RlcSduDelayDl` | `us` | atraso RLC que pode ser comparado com eventos O1/VES |
+| `RRU.PrbTotDl` / `RRU.PrbTotUl` | `%` | ocupacao de recursos de radio durante carga ou degradacao |
 
 ## Limites atuais
 
-- O gNB OAI monolitico do lab nao expoe O1 NETCONF nativo.
-- O workflow IA/ML e uma baseline deterministica, criada para validar o caminho
-  de dados antes de treinar modelos mais pesados.
-- O closed loop completo ate A1/xApp/E2 ainda exige conectar a recomendacao do
-  SMO a uma rApp/nonRT policy.
+- O gNB OAI monolitico usado neste lab nao expoe O1 NETCONF nativo.
+- O1 deve ser demonstrado com simuladores O-DU/O-RU.
+- O SMO full pode exigir 24-32 GB RAM e muitas imagens externas.
+- O scaffold nao clona repositorios nem baixa imagens por conta propria.
+
+## Proximos passos de implementacao
+
+1. Escolher release O-RAN SC OAM/SMO e fixar commit para modo externo.
+2. Adicionar simulador NTSIM real como camada opcional.
+3. Incorporar `smo_lab_events.jsonl` como feature contextual do rApp.
+4. Publicar um policy type A1 próprio e compatível com o xApp de controle.
+5. Criar xApp de ação E2 controlada, com TTL/rollback, e registrar impacto em KPM.
+
+## Fluxo de IA e A1
+
+O rApp experimental da fase 3 treina um baseline robusto com logs KPM, avalia
+uma janela de operação e gera uma policy candidata. O envio ao PMS é opt-in:
+
+```bash
+./scripts/run_ai_policy_lab.sh                    # treino, inferencia e dry-run
+AI_POLICY_COMMIT=1 ./scripts/run_ai_policy_lab.sh # envia ao PMS
+```
+
+Detalhes de arquitetura, contrato A1, segurança e validação:
+[FASE3_IA_A1.md](FASE3_IA_A1.md).

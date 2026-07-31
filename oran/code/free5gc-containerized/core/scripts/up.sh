@@ -113,11 +113,11 @@ docker compose up -d free5gc-smf
 echo "   Aguardando SMF ficar pronto..."
 sleep 2
 
-# 6. RAN: gNB em gNB_tradicional/ ou gNB_desagregated/ (rede free5gc-privnet compartilhada)
+# 6. RAN: gNB em gNB_traditional/ ou gNB_disaggregated/ (rede free5gc-privnet compartilhada)
 echo "6️⃣  RAN (srsRAN) não faz parte deste compose."
 echo "   Com core ativo, suba a RAN desejada:"
-echo "   • Tradicional: cd ../gNB_tradicional && ./scripts/up.sh"
-echo "   • Desagregada (CU/DU): cd ../gNB_desagregated && ./scripts/up.sh"
+echo "   • Tradicional: cd ../gNB_traditional && ./scripts/up.sh"
+echo "   • Desagregada (CU/DU): cd ../gNB_disaggregated && ./scripts/up.sh"
 
 # 7. Serviços opcionais (WebUI, NEF, CHF)
 echo "7️⃣  Iniciando serviços opcionais (WebUI, NEF, CHF)..."
@@ -186,7 +186,7 @@ echo ""
 echo "✅ Inicialização concluída!"
 echo ""
 echo "📋 Próximos passos:"
-echo "  - Subir RAN: cd ../gNB_tradicional && ./scripts/up.sh  |  ou  cd ../gNB_desagregated && ./scripts/up.sh"
+echo "  - Subir RAN: cd ../gNB_traditional && ./scripts/up.sh  |  ou  cd ../gNB_disaggregated && ./scripts/up.sh"
 echo "  - Verificar saúde: ./scripts/healthcheck.sh"
 echo "  - Testar sistema: ./scripts/test.sh"
 echo "  - Ver logs: docker compose logs -f <servico>"

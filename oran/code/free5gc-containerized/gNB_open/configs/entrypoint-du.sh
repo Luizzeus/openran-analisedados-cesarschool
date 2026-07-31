@@ -21,6 +21,19 @@ BIN="$(command -v srsdu || true)"
 
 DU_CONFIG="${DU_CONFIG:-du.yml}"
 echo "$(date '+%Y-%m-%d %H:%M:%S')[info] srsDU config: ${DU_CONFIG}"
+CONFIG_PATH="/etc/srsran/${DU_CONFIG}"
+
+if grep -q "ru_ofh:" "${CONFIG_PATH}" 2>/dev/null; then
+  DU_OFH_MAC="${DU_OFH_MAC:-02:00:00:00:01:02}"
+  OFH_IFACE="$(ip -o link show | awk -v mac="${DU_OFH_MAC}" 'tolower($0) ~ tolower(mac) { gsub(":", "", $2); print $2; exit }')"
+  if [ -n "${OFH_IFACE}" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S')[info] OFH interface detected by MAC ${DU_OFH_MAC}: ${OFH_IFACE}"
+    sed "s/^\([[:space:]]*network_interface:[[:space:]]*\).*/\1${OFH_IFACE}/" "${CONFIG_PATH}" > /tmp/du-ofh-runtime.yml
+    CONFIG_PATH="/tmp/du-ofh-runtime.yml"
+  else
+    echo "$(date '+%Y-%m-%d %H:%M:%S')[warn] OFH interface with MAC ${DU_OFH_MAC} not found; using ${CONFIG_PATH}"
+  fi
+fi
 
 if [ "${DU_AUTO_START:-0}" = "0" ]; then
   echo "$(date '+%Y-%m-%d %H:%M:%S')[info] DU_AUTO_START=0: srsdu NÃO foi iniciado (arranque manual)."
@@ -30,5 +43,4 @@ if [ "${DU_AUTO_START:-0}" = "0" ]; then
   exec tail -f /dev/null
 fi
 
-exec "$BIN" -c "/etc/srsran/${DU_CONFIG}"
-
+exec "$BIN" -c "${CONFIG_PATH}"

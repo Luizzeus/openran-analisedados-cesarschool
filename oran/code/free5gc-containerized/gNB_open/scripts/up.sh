@@ -5,6 +5,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
+# shellcheck source=../../core/scripts/lib/srsran-image.sh
+. "${ROOT}/../core/scripts/lib/srsran-image.sh"
 
 NET=free5gc-privnet
 if ! docker network inspect "$NET" >/dev/null 2>&1; then
@@ -55,6 +57,6 @@ echo ""
 echo "Nota: para ZMQ (srsUE), o modo manual é mais confiável (ordem CU → UE → DU)."
 
 mkdir -p logs
-docker compose up -d --build
+ensure_srsran_image
+docker compose up -d
 docker compose ps
-

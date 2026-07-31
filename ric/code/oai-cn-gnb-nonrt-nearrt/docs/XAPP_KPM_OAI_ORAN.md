@@ -38,7 +38,7 @@ O xApp pede ao **Subscription Manager** uma subscrição **E2SM-KPM Report Style
 ## Sequência de arranque (recomendada)
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb-nonrt-nearrt
 
 # 1) Lab completo (Core + nearRT + nonRT perfil oran + gNB + UE)
 ./scripts/up_oai_oran_lab.sh

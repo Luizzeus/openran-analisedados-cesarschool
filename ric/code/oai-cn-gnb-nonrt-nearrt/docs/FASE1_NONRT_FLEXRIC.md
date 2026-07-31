@@ -75,9 +75,8 @@ Subir lab completo da Fase 1:
 
 ```bash
 ./scripts/up_e2_lab.sh
-./scripts/test_nonrt_ric.sh --seed
-sudo ./scripts/test_e2_kpm.sh
 ./scripts/explore_e2_sm.sh quick
+./scripts/test_e2_kpm.sh
 ```
 
 Gerar carga de UE e observar xApps/nonRT:
@@ -91,27 +90,6 @@ Parar:
 
 ```bash
 ./scripts/down_e2_lab.sh
-```
-
-## Ordem de validacao
-
-| Ordem | Teste | Quando usar | Sucesso esperado |
-|-------|-------|-------------|------------------|
-| 1 | `./scripts/test_nonrt_ric.sh --seed` | Sempre, para provar o plano nonRT isolado | PMS, A1 simulators, Gateway e Control Panel `OK`; policy criada |
-| 2 | `sudo ./scripts/test_e2_kpm.sh` | Sempre, para provar RAN + FlexRIC + xApp KPM | `Connected E2 nodes = 1`, `Successfully subscribed`, `KPM INDICATIONs recebidas` |
-| 3 | `./scripts/test_e2_sm.sh cust` | Depois do KPM, para explorar SMs customizados | indications dos SMs customizados |
-| 4 | `./scripts/explore_e2_sm.sh quick` | Smoke/resumo didatico dos SMs | subscription bem-sucedida e resumo dos logs |
-| 5 | `./scripts/test_e2_rc_attach.sh` | Quando quiser validar RC ligado ao attach do UE | indication de evento RRC/attach |
-| 6 | `UE_SOURCE=nrue ./scripts/stress_ue_observe_apps.sh` | Validacao mais longa com baseline/stress/recovery | KPMs maiores durante stress e relatorio em `logs/ue_stress_*` |
-| 7 | `UE_SOURCE=nrue ./scripts/test-vpp-throughput.sh` | Complementar, para plano de usuario | throughput medido via tunel UE |
-
-`test_e2_kpm.sh` inicia gNB e nrUE com `sudo`. Se uma rodada anterior deixou
-processos OAI como `root`, rode o teste tambem com `sudo` ou limpe antes:
-
-```bash
-sudo pkill -f nr-softmodem
-sudo pkill -f nr-uesoftmodem
-./scripts/down_flexric.sh
 ```
 
 ## KPMs importantes
@@ -138,11 +116,8 @@ grep -E 'DRB\.|RRU\.|KPM ind_msg|Connected E2 nodes' logs/xapp_kpm_lab.log
 ## Evidencias esperadas
 
 - `test_nonrt_ric.sh`: PMS, A1 simulators, Gateway e Control Panel `OK`.
-- `test_e2_kpm.sh`: E2 node conectado, PDU session criada, tunel `oaitun_ue*`
-  com IP `12.1.1.x` e KPM indications com metricas `DRB.*` e `RRU.*`.
 - `explore_e2_sm.sh`: `Connected E2 nodes = 1` e `Successfully subscribed`.
-- `test_e2_sm.sh cust`: SMs customizados respondem via FlexRIC.
-- `test_e2_rc_attach.sh`: RC recebe indication durante attach/RRC.
+- `test_e2_kpm.sh`: KPM indications com metricas `DRB.*` e `RRU.*`.
 - `stress_ue_observe_apps.sh`: aumento de throughput/PRB durante `stress` e reducao em `recovery`.
 
 ## Limites conhecidos
@@ -160,4 +135,3 @@ grep -E 'DRB\.|RRU\.|KPM ind_msg|Connected E2 nodes' logs/xapp_kpm_lab.log
 | xApp sem E2 node | gNB sem E2 setup | verificar `nearRT-RIC`, `gnb_oai.log` e porta `36421` |
 | KPM zerado | pouco trafego ou slice errado | usar `KPM_SST=222 KPM_SD=123 KPM_TRAFFIC=1` |
 | gNB aborta com KPM | libs FlexRIC desalinhadas | rodar `./scripts/build_flexric_tools.sh` |
-| gNB antigo continua escrevendo log | processos OAI de rodada anterior como `root` | `sudo pkill -f nr-softmodem; sudo pkill -f nr-uesoftmodem` |

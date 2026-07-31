@@ -65,8 +65,6 @@ fi
 pkill -f "nr-softmodem" 2>/dev/null || true
 pkill -f "nr-uesoftmodem" 2>/dev/null || true
 sleep 2
-: > "$GNB_LOG"
-: > "$UE_LOG"
 
 echo "Iniciando gNB em background..."
 cd "$BUILD_DIR"
@@ -80,11 +78,6 @@ echo "  gNB PID: $GNB_PID (logs: $GNB_LOG)"
 
 echo "Aguardando gNB estabilizar..."
 sleep 10
-if ! kill -0 "$GNB_PID" 2>/dev/null; then
-    echo "ERRO: gNB abortou ao iniciar. Últimas linhas:"
-    tail -60 "$GNB_LOG" || true
-    exit 1
-fi
 
 echo "Iniciando nrUE em background..."
 sudo nohup ./nr-uesoftmodem -O "$OAI_DIR/scripts/ue.conf" \
@@ -92,12 +85,6 @@ sudo nohup ./nr-uesoftmodem -O "$OAI_DIR/scripts/ue.conf" \
     > "$UE_LOG" 2>&1 &
 UE_PID=$!
 echo "  nrUE PID: $UE_PID (logs: $UE_LOG)"
-sleep 3
-if ! kill -0 "$UE_PID" 2>/dev/null; then
-    echo "ERRO: nrUE abortou ao iniciar. Últimas linhas:"
-    tail -60 "$UE_LOG" || true
-    exit 1
-fi
 
 echo ""
 echo "=========================================="

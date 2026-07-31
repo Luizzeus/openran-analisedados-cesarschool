@@ -34,7 +34,7 @@ Só se tiver corrido o lab antes e quiser estado limpo:
 
 ```bash
 cd free5gc-containerized/gNB_open && ./scripts/down.sh 2>/dev/null || true
-cd ../gNB_desagregated && ./scripts/down.sh 2>/dev/null || true
+cd ../gNB_disaggregated && ./scripts/down.sh 2>/dev/null || true
 cd ../gNB_traditional && ./scripts/down.sh 2>/dev/null || true
 cd ../core && ./scripts/down.sh --volumes   # apaga Mongo — confirme quando o script pedir
 ```

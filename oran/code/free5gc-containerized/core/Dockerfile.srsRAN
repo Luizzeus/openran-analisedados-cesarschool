@@ -8,16 +8,20 @@
         libboost-program-options-dev libconfig++-dev libzmq3-dev \
         && rm -rf /var/lib/apt/lists/*
     
+    ARG SRSRAN_PROJECT_REPO=https://github.com/srsran/srsRAN_Project.git
+    ARG SRSRAN_PROJECT_REF=release_25_04
+
     WORKDIR /opt
-    RUN git clone https://github.com/srsran/srsRAN_Project.git
+    RUN git clone --depth 1 --branch "${SRSRAN_PROJECT_REF}" "${SRSRAN_PROJECT_REPO}" srsRAN_Project
     WORKDIR /opt/srsRAN_Project
-    # Se você quiser travar no mesmo commit do seu host:
-    # RUN git checkout 3ed363dabf
-    
-    RUN mkdir -p build && cd build && \
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON .. && \
-        ninja && ninja install
+
+    RUN cmake -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DDU_SPLIT_TYPE=SPLIT_8 \
+        -DENABLE_EXPORT=ON \
+        -DENABLE_ZEROMQ=ON && \
+        cmake --build build --target install -j "$(nproc)"
     
     RUN ldconfig
     

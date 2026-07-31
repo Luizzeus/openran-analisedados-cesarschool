@@ -36,7 +36,7 @@ Ver [EXPLORAR_NONRT_RIC.md](EXPLORAR_NONRT_RIC.md).
 ## Início rápido
 
 ```bash
-cd ric/code/oai-cn-gnb-nonrt-nearrt
+cd code/oai-cn-gnb-nonrt-nearrt
 
 # Só nonRT RIC
 ./scripts/up_nonrt_ric.sh

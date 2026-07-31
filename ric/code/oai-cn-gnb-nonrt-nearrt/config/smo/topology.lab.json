@@ -1,0 +1,97 @@
+{
+  "lab": "oai-cn-gnb-nonrt-nearrt",
+  "phase": 3,
+  "description": "Topologia SMO-lite para correlacionar OAM/O1 simulado, A1, E2/KPM e inventario O2 local.",
+  "managedElements": [
+    {
+      "id": "oai_gnb_lab",
+      "type": "gNB",
+      "interfaces": {
+        "e2": {
+          "ric": "oran_sc_nearrt",
+          "nodeIdCommand": "./scripts/get_oran_e2_node_id.sh"
+        },
+        "ng": {
+          "amf": "oai-amf",
+          "n2Address": "192.168.70.129"
+        },
+        "gtpu": {
+          "upf": "oai-upf",
+          "n3Address": "192.168.70.129"
+        },
+        "o1": {
+          "mode": "simulated",
+          "note": "O gNB OAI monolitico do lab nao expoe O1 NETCONF nativo."
+        }
+      }
+    },
+    {
+      "id": "sim_o_du_001",
+      "type": "O-DU-SIM",
+      "interfaces": {
+        "o1": {
+          "mode": "simulated",
+          "netconfPort": 830
+        }
+      }
+    },
+    {
+      "id": "sim_o_ru_001",
+      "type": "O-RU-SIM",
+      "interfaces": {
+        "o1": {
+          "mode": "simulated",
+          "netconfPort": 830
+        }
+      }
+    },
+    {
+      "id": "oran_sc_nearrt",
+      "type": "nearRT-RIC",
+      "interfaces": {
+        "a1": {
+          "mediator": "http://127.0.0.1:10000/a1-p"
+        },
+        "e2": {
+          "sctp": "127.0.0.1:36422"
+        }
+      }
+    },
+    {
+      "id": "nonrt_policy_agent",
+      "type": "nonRT-RIC",
+      "interfaces": {
+        "a1": {
+          "pms": "http://127.0.0.1:8081/a1-policy/v2"
+        }
+      }
+    }
+  ],
+  "openInterfaces": [
+    {
+      "name": "O1",
+      "status": "simulated",
+      "use": "Inventario, configuracao e eventos OAM via simuladores O-DU/O-RU."
+    },
+    {
+      "name": "A1",
+      "status": "available-when-phase2-up",
+      "use": "Policies nonRT -> nearRT RIC."
+    },
+    {
+      "name": "E2",
+      "status": "available-when-phase2-up",
+      "use": "KPM, RNIB e xApps nearRT."
+    },
+    {
+      "name": "O2",
+      "status": "local-inventory",
+      "use": "Inventario de infraestrutura Docker/host do lab."
+    },
+    {
+      "name": "VES",
+      "status": "simulated",
+      "use": "Eventos OAM gravados em logs para correlacao com KPM."
+    }
+  ]
+}

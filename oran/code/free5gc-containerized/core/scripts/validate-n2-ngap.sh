@@ -23,18 +23,18 @@ get_ran_log_content() {
   out=$(docker logs --since "$since_window" "$c" 2>&1 || true)
   case "$c" in
     srsran-gnb-tradicional)
-      for _gnbdir in gNB_traditional gNB_tradicional; do
+      for _gnbdir in gNB_traditional; do
         [ -f "$ROOT_DIR/$_gnbdir/logs/gnb.log" ] && out="$out"$'\n'"$(tail -n "$max_lines" "$ROOT_DIR/$_gnbdir/logs/gnb.log" 2>/dev/null || true)"
       done
       ;;
     srsran-cu)
-      # Split CU: cu.log em gNB_desagregated ou gNB_open (mesmo nome de contentor)
-      for _cudir in gNB_desagregated gNB_open; do
+      # Split CU: cu.log em gNB_disaggregated ou gNB_open (mesmo nome de contentor)
+      for _cudir in gNB_disaggregated gNB_open; do
         [ -f "$ROOT_DIR/$_cudir/logs/cu.log" ] && out="$out"$'\n'"$(tail -n "$max_lines" "$ROOT_DIR/$_cudir/logs/cu.log" 2>/dev/null || true)"
       done
       ;;
     srsran-gnb)
-      for _gnbdir in gNB_traditional gNB_tradicional; do
+      for _gnbdir in gNB_traditional; do
         [ -f "$ROOT_DIR/$_gnbdir/logs/gnb.log" ] && out="$out"$'\n'"$(tail -n "$max_lines" "$ROOT_DIR/$_gnbdir/logs/gnb.log" 2>/dev/null || true)"
       done
       ;;
