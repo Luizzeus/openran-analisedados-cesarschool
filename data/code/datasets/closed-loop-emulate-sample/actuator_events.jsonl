@@ -1,0 +1,10 @@
+{"dry_run": false, "event": "apply_start", "mode": "emulate", "policy_id": "cl-ue-tp-20260804005726", "ts": "2026-08-04T00:57:26.738527+00:00"}
+{"action": "tc-tbf", "event": "emulate_applied", "iface": "oaitun_ue1", "mode": "emulate", "rate_kbit": 8000, "ts": "2026-08-04T00:57:26.796421+00:00"}
+{"delta_mean": {"DRB.RlcSduDelayDl": -106.72566666666668, "DRB.UEThpUl": -78380.03183333334, "RRU.PrbTotUl": -95.33333333333333}, "event": "effect_report", "output": "/home/jakunzler/Documents/GitHub/cesar/cesar-school-lectures/modulo09-analise_dados_redes_telecom/code/oai-cn-gnb-nonrt-nearrt/logs/closed_loop_test_offline/effect_report.json", "ts": "2026-08-04T00:57:27.215816+00:00"}
+{"action": "tc-del", "event": "emulate_rollback", "iface": "oaitun_ue1", "mode": "emulate", "ts": "2026-08-04T00:57:27.353952+00:00"}
+{"action": "tc-del", "event": "rollback_done", "iface": "oaitun_ue1", "mode": "emulate", "ts": "2026-08-04T00:57:27.354219+00:00"}
+{"dry_run": false, "event": "apply_start", "mode": "emulate", "policy_id": "cl-ue-tp-20260804011816", "ts": "2026-08-04T01:18:16.571304+00:00"}
+{"action": "tc-tbf", "event": "emulate_applied", "iface": "oaitun_ue1", "mode": "emulate", "rate_kbit": 8000, "ts": "2026-08-04T01:18:16.613166+00:00"}
+{"delta_mean": {"DRB.RlcSduDelayDl": -106.72566666666668, "DRB.UEThpUl": -78380.03183333334, "RRU.PrbTotUl": -95.33333333333333}, "event": "effect_report", "output": "/home/jakunzler/Documents/GitHub/cesar/cesar-school-lectures/modulo09-analise_dados_redes_telecom/code/oai-cn-gnb-nonrt-nearrt/logs/closed_loop_test_offline/effect_report.json", "ts": "2026-08-04T01:18:16.872086+00:00"}
+{"action": "tc-del", "event": "emulate_rollback", "iface": "oaitun_ue1", "mode": "emulate", "ts": "2026-08-04T01:18:16.981071+00:00"}
+{"action": "tc-del", "event": "rollback_done", "iface": "oaitun_ue1", "mode": "emulate", "ts": "2026-08-04T01:18:16.981225+00:00"}

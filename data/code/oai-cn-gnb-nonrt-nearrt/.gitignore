@@ -1,0 +1,21 @@
+logs/
+*.log
+openairinterface5g/cmake_targets/ran_build/
+openairinterface5g/cmake_targets/ran_build-oran-sc/
+openairinterface5g/openair2/E2AP/flexric/build/
+openairinterface5g/openair2/E2AP/flexric/src/agent/e2_agent_api.c.bak_oran_sc_build
+
+# Generated logs and runtime artifacts
+*.log
+log.txt
+logs/
+**/logs/
+
+# Large capture/dump/runtime files
+*.pcap
+*.pcapng
+*.dump
+*.trace
+*.tar
+*.tar.gz
+*.zip

@@ -1,0 +1,42 @@
+{
+  "actuation": {
+    "emulate": {
+      "iface_prefix": "oaitun_ue",
+      "rate_kbit": 8000
+    },
+    "mode": "emulate",
+    "real": {
+      "control_action_id": 2,
+      "dir": 0,
+      "drb_id": 1,
+      "forbidden_actions": [
+        6
+      ],
+      "qfi": 1,
+      "ran_func_id": 3,
+      "rc_style": 1
+    },
+    "ttl_sec": 30
+  },
+  "lab_context": {
+    "anomalous_features": [
+      "DRB.RlcSduDelayDl",
+      "DRB.UEThpUl",
+      "RRU.PrbTotUl"
+    ],
+    "decision": "apply"
+  },
+  "policy_data": {
+    "qosObjectives": {
+      "priorityLevel": 10
+    },
+    "scope": {
+      "qosId": "qos-lab",
+      "ueId": "ue-any"
+    }
+  },
+  "policy_id": "cl-ue-tp-20260804011816",
+  "policytype_id": "1",
+  "ric_id": "ric-oran",
+  "service_id": "closed-loop-ue-tp-rapp"
+}

@@ -1,0 +1,49 @@
+# Usuário final 01 — cadastrado em oai_db2.sql (AccessAndMobilitySubscriptionData)
+supi: "imsi-208950000000031"
+mcc: "208"
+mnc: "95"
+key: "0C0A34601D4F07677303652C0462535B"
+opType: "OPC"
+op: "63BFA50EE6523365FF14C1F45F88737D"
+amf: "8000"
+imei: "356938035643803"
+imeiSv: "0035609204079514"
+
+# Procura o gNB pelo IP do serviço ueransim-gnb (na rede docker)
+gnbSearchList:
+  - 192.168.70.141
+
+# Sessão / PDU
+sessions:
+  - type: "IPv4"
+    apn: "default"        # DNN no core OAI (você usa DNN_0=oai)
+    slice:
+      sst: 222
+      sd: "000123"
+
+integrity:
+  IA1: false
+  IA2: true
+  IA3: false
+
+integrityMaxRate:
+  uplink: full
+  downlink: full
+
+ciphering:
+  EA1: false
+  EA2: false
+  EA3: false
+  EA0: true
+
+uacAic:
+  mps: false
+  mcs: false
+
+uacAcc:
+  normalClass: 0
+  class11: false
+  class12: false
+  class13: false
+  class14: false
+  class15: false

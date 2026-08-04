@@ -1,0 +1,109 @@
+# O-RAN SC nonRT RIC — Fase 1 (lab OAI)
+# PMS + A1 Simulators + Gateway + Control Panel
+# Sem SDNC A1 Controller; sem DMAAP/Kafka (config mínima)
+
+services:
+  policy-agent:
+    image: "${PMS_IMAGE_BASE}:${PMS_IMAGE_TAG}"
+    container_name: nonrt-policy-agent
+    hostname: policy-agent
+    networks:
+      oran-nonrt:
+        aliases:
+          - policy-agent-container
+    ports:
+      - "${NONRT_PMS_HTTP_PORT:-8081}:8081"
+      - "${NONRT_PMS_HTTPS_PORT:-8433}:8433"
+    volumes:
+      - ./application-policyagent.yaml:/opt/app/policy-agent/config/application.yaml:ro
+      - ./application_configuration.json:/opt/app/policy-agent/data/application_configuration.json:ro
+    healthcheck:
+      # Imagem PMS não inclui curl/wget; usar bash /dev/tcp
+      test:
+        - CMD-SHELL
+        - >
+          bash -c 'exec 3<>/dev/tcp/localhost/8081 &&
+          printf "GET /status HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3 &&
+          head -c 256 <&3 | grep -q "hunky dory"'
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 60s
+    restart: unless-stopped
+
+  a1-sim-OSC:
+    image: "${A1_SIM_IMAGE_BASE}:${A1_SIM_IMAGE_TAG}"
+    container_name: a1-sim-OSC
+    networks:
+      - oran-nonrt
+    ports:
+      - "30001:8085"
+      - "30002:8185"
+    environment:
+      A1_VERSION: OSC_2.1.0
+      REMOTE_HOSTS_LOGGING: "1"
+      ALLOW_HTTP: "true"
+    restart: unless-stopped
+
+  a1-sim-STD:
+    image: "${A1_SIM_IMAGE_BASE}:${A1_SIM_IMAGE_TAG}"
+    container_name: a1-sim-STD
+    networks:
+      - oran-nonrt
+    ports:
+      - "30003:8085"
+      - "30004:8185"
+    environment:
+      A1_VERSION: STD_1.1.3
+      REMOTE_HOSTS_LOGGING: "1"
+      ALLOW_HTTP: "true"
+    restart: unless-stopped
+
+  a1-sim-STD-v2:
+    image: "${A1_SIM_IMAGE_BASE}:${A1_SIM_IMAGE_TAG}"
+    container_name: a1-sim-STD-v2
+    networks:
+      - oran-nonrt
+    ports:
+      - "30005:8085"
+      - "30006:8185"
+    environment:
+      A1_VERSION: STD_2.0.0
+      REMOTE_HOSTS_LOGGING: "1"
+      ALLOW_HTTP: "true"
+    restart: unless-stopped
+
+  nonrtric-gateway:
+    image: "${NONRTRIC_GATEWAY_IMAGE_BASE}:${NONRTRIC_GATEWAY_IMAGE_TAG}"
+    container_name: nonrtric-gateway
+    hostname: nonrtric-gateway
+    depends_on:
+      policy-agent:
+        condition: service_healthy
+    networks:
+      oran-nonrt:
+        aliases:
+          - nonrtric-gateway-container
+    ports:
+      - "${NONRT_GATEWAY_PORT:-9090}:9090"
+    volumes:
+      - ./application-gateway.yaml:/opt/app/nonrtric-gateway/config/application.yaml:ro
+    restart: unless-stopped
+
+  policy-control-panel:
+    image: "${CONTROL_PANEL_IMAGE_BASE}:${CONTROL_PANEL_IMAGE_TAG}"
+    container_name: nonrt-control-panel
+    depends_on:
+      - nonrtric-gateway
+    networks:
+      - oran-nonrt
+    ports:
+      - "${NONRT_CONTROL_PANEL_PORT:-8181}:8080"
+    volumes:
+      - ./nginx-control-panel.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+
+networks:
+  oran-nonrt:
+    name: oran-nonrt-net
+    driver: bridge

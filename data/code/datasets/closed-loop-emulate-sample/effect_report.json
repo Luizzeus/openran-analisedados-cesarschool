@@ -1,0 +1,49 @@
+{
+  "after": {
+    "DRB.RlcSduDelayDl": {
+      "count": 20,
+      "mean": 55.25,
+      "median": 0.0
+    },
+    "DRB.UEThpUl": {
+      "count": 20,
+      "mean": 3.72,
+      "median": 3.72
+    },
+    "RRU.PrbTotUl": {
+      "count": 20,
+      "mean": 2.0,
+      "median": 2.0
+    }
+  },
+  "after_samples": 20,
+  "before": {
+    "DRB.RlcSduDelayDl": {
+      "count": 60,
+      "mean": 161.97566666666668,
+      "median": 158.9
+    },
+    "DRB.UEThpUl": {
+      "count": 60,
+      "mean": 78383.75183333334,
+      "median": 80023.675
+    },
+    "RRU.PrbTotUl": {
+      "count": 60,
+      "mean": 97.33333333333333,
+      "median": 99.0
+    }
+  },
+  "before_samples": 60,
+  "delta_mean": {
+    "DRB.RlcSduDelayDl": -106.72566666666668,
+    "DRB.UEThpUl": -78380.03183333334,
+    "RRU.PrbTotUl": -95.33333333333333
+  },
+  "generated_at": "2026-08-04T01:18:16.871548+00:00",
+  "mode": "emulate",
+  "notes": {
+    "emulate_expect": "DRB.UEThpUl mean should drop under UL load when tc is applied",
+    "real_expect": "CONTROL action=2 evidence in actuator audit; KPM impact may be limited on OAI PoC"
+  }
+}

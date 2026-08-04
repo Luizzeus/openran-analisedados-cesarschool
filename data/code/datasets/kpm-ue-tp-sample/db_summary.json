@@ -1,0 +1,17 @@
+[
+  {
+    "run_id": "ue-tp-20260804-174422",
+    "phase": "baseline",
+    "count": 20
+  },
+  {
+    "run_id": "ue-tp-20260804-174422",
+    "phase": "recovery",
+    "count": 20
+  },
+  {
+    "run_id": "ue-tp-20260804-174422",
+    "phase": "stress",
+    "count": 60
+  }
+]

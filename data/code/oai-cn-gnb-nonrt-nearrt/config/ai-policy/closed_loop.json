@@ -1,0 +1,42 @@
+{
+  "use_case": "closed-loop-ue-tp",
+  "description": "Loop fechado Fase 3: MAD sobre KPM E2 → policy A1 → atuação emulate|real com instrumentação.",
+  "features": [
+    "RRU.PrbTotUl",
+    "DRB.RlcSduDelayDl",
+    "DRB.UEThpUl"
+  ],
+  "score_threshold": 3.5,
+  "min_anomalous_features": 2,
+  "mad_floor": 1.0,
+  "ric_id": "ric-oran",
+  "policytype_id": "1",
+  "service_id": "closed-loop-ue-tp-rapp",
+  "policy_id_prefix": "cl-ue-tp",
+  "policy_data": {
+    "scope": {
+      "ueId": "ue-any",
+      "qosId": "qos-lab"
+    },
+    "qosObjectives": {
+      "priorityLevel": 10
+    }
+  },
+  "actuation": {
+    "mode": "emulate",
+    "ttl_sec": 30,
+    "emulate": {
+      "rate_kbit": 8000,
+      "iface_prefix": "oaitun_ue"
+    },
+    "real": {
+      "rc_style": 1,
+      "control_action_id": 2,
+      "drb_id": 1,
+      "qfi": 1,
+      "dir": 0,
+      "ran_func_id": 3,
+      "forbidden_actions": [6]
+    }
+  }
+}

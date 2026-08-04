@@ -1,0 +1,30 @@
+{
+  "algorithm": "robust-baseline-mad",
+  "features": {
+    "DRB.RlcSduDelayDl": {
+      "mad": 0.0,
+      "max": 218.0,
+      "median": 0.0,
+      "min": 0.0
+    },
+    "DRB.UEThpUl": {
+      "mad": 0.0,
+      "max": 4.46,
+      "median": 3.72,
+      "min": 3.0
+    },
+    "RRU.PrbTotUl": {
+      "mad": 0.0,
+      "max": 2.0,
+      "median": 2.0,
+      "min": 2.0
+    }
+  },
+  "mad_floor": 1.0,
+  "min_anomalous_features": 2,
+  "sample_count": 20,
+  "schema_version": 1,
+  "score_threshold": 3.5,
+  "trained_at": "2026-08-04T20:44:22.994220+00:00",
+  "training_source": "/home/jakunzler/Documents/GitHub/cesar/cesar-school-lectures/modulo09-analise_dados_redes_telecom/code/oai-cn-gnb-nonrt-nearrt/logs/experiments/ue-tp-20260804-174422/baseline_from_db.log"
+}

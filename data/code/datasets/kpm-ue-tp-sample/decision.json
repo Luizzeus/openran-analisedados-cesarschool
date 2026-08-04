@@ -1,0 +1,61 @@
+{
+  "actuation": {
+    "mode": "emulate",
+    "real": {}
+  },
+  "evaluation": {
+    "actuation": {
+      "mode": "emulate",
+      "real": {}
+    },
+    "apply_votes": 5,
+    "decision": "apply",
+    "evaluated_at": "2026-08-04T20:44:23.142853+00:00",
+    "latest": {
+      "anomalous_features": [
+        "DRB.RlcSduDelayDl",
+        "DRB.UEThpUl",
+        "RRU.PrbTotUl"
+      ],
+      "decision": "apply",
+      "sample": {
+        "DRB.RlcSduDelayDl": 154.88,
+        "DRB.UEThpUl": 77216.56,
+        "RRU.PrbTotUl": 99.0
+      },
+      "scores": {
+        "DRB.RlcSduDelayDl": 154.88,
+        "DRB.UEThpUl": 77212.84,
+        "RRU.PrbTotUl": 97.0
+      }
+    },
+    "window_size": 5
+  },
+  "policy": {
+    "actuation": {
+      "mode": "emulate",
+      "real": {}
+    },
+    "lab_context": {
+      "anomalous_features": [
+        "DRB.RlcSduDelayDl",
+        "DRB.UEThpUl",
+        "RRU.PrbTotUl"
+      ],
+      "decision": "apply"
+    },
+    "policy_data": {
+      "qosObjectives": {
+        "priorityLevel": 10
+      },
+      "scope": {
+        "qosId": "qos-lab",
+        "ueId": "ue-any"
+      }
+    },
+    "policy_id": "ai-load-control-20260804204423",
+    "policytype_id": "1",
+    "ric_id": "ric-oran",
+    "service_id": "ai-training-rapp"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "actuation": {
+    "emulate": {
+      "iface_prefix": "oaitun_ue",
+      "rate_kbit": 8000
+    },
+    "mode": "emulate",
+    "real": {
+      "control_action_id": 2,
+      "dir": 0,
+      "drb_id": 1,
+      "forbidden_actions": [
+        6
+      ],
+      "qfi": 1,
+      "ran_func_id": 3,
+      "rc_style": 1
+    },
+    "ttl_sec": 30
+  },
+  "evaluation": {
+    "actuation": {
+      "emulate": {
+        "iface_prefix": "oaitun_ue",
+        "rate_kbit": 8000
+      },
+      "mode": "emulate",
+      "real": {
+        "control_action_id": 2,
+        "dir": 0,
+        "drb_id": 1,
+        "forbidden_actions": [
+          6
+        ],
+        "qfi": 1,
+        "ran_func_id": 3,
+        "rc_style": 1
+      },
+      "ttl_sec": 30
+    },
+    "apply_votes": 5,
+    "decision": "apply",
+    "evaluated_at": "2026-08-04T01:18:16.182108+00:00",
+    "latest": {
+      "anomalous_features": [
+        "DRB.RlcSduDelayDl",
+        "DRB.UEThpUl",
+        "RRU.PrbTotUl"
+      ],
+      "decision": "apply",
+      "sample": {
+        "DRB.RlcSduDelayDl": 154.88,
+        "DRB.UEThpUl": 77216.56,
+        "RRU.PrbTotUl": 99.0
+      },
+      "scores": {
+        "DRB.RlcSduDelayDl": 154.88,
+        "DRB.UEThpUl": 77212.84,
+        "RRU.PrbTotUl": 97.0
+      }
+    },
+    "window_size": 5
+  },
+  "policy": {
+    "actuation": {
+      "emulate": {
+        "iface_prefix": "oaitun_ue",
+        "rate_kbit": 8000
+      },
+      "mode": "emulate",
+      "real": {
+        "control_action_id": 2,
+        "dir": 0,
+        "drb_id": 1,
+        "forbidden_actions": [
+          6
+        ],
+        "qfi": 1,
+        "ran_func_id": 3,
+        "rc_style": 1
+      },
+      "ttl_sec": 30
+    },
+    "lab_context": {
+      "anomalous_features": [
+        "DRB.RlcSduDelayDl",
+        "DRB.UEThpUl",
+        "RRU.PrbTotUl"
+      ],
+      "decision": "apply"
+    },
+    "policy_data": {
+      "qosObjectives": {
+        "priorityLevel": 10
+      },
+      "scope": {
+        "qosId": "qos-lab",
+        "ueId": "ue-any"
+      }
+    },
+    "policy_id": "cl-ue-tp-20260804011816",
+    "policytype_id": "1",
+    "ric_id": "ric-oran",
+    "service_id": "closed-loop-ue-tp-rapp"
+  }
+}

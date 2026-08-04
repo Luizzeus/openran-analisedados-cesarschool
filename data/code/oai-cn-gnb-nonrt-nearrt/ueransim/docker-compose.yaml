@@ -1,0 +1,31 @@
+services:
+  ueransim:
+    image: gradiant/ueransim:3.2.6
+    container_name: ueransim
+    hostname: ueransim
+    working_dir: /ueransim
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    command: []
+    networks:
+      demo-oai-public-net:
+        ipv4_address: 192.168.70.141
+      oai-public-access:
+        ipv4_address: 192.168.72.141
+    volumes:
+      - ./configs/entrypoint.sh:/entrypoint.sh:ro
+      - ./configs/gnb.yaml:/etc/ueransim/gnb.yaml
+      - ./configs/ue.yaml:/etc/ueransim/ue.yaml
+    privileged: true
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "ip a | grep -q uesimtun"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  demo-oai-public-net:
+    external: true
+  oai-public-access:
+    external: true

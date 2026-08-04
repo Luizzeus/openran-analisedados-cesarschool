@@ -1,0 +1,23 @@
+{
+  "features": [
+    "RRU.PrbTotUl",
+    "DRB.RlcSduDelayDl",
+    "DRB.UEThpUl"
+  ],
+  "score_threshold": 3.5,
+  "min_anomalous_features": 2,
+  "mad_floor": 1.0,
+  "ric_id": "ric-oran",
+  "policytype_id": "1",
+  "service_id": "ai-training-rapp",
+  "policy_id_prefix": "ai-load-control",
+  "policy_data": {
+    "scope": {
+      "ueId": "ue-any",
+      "qosId": "qos-lab"
+    },
+    "qosObjectives": {
+      "priorityLevel": 10
+    }
+  }
+}

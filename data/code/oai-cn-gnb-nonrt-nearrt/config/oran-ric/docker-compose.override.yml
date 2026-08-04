@@ -1,0 +1,49 @@
+# Fase 2 — customizações sobre vendor/oran-sc-ric/docker-compose.yml
+# E2 SCTP exposto no host (36422) + A1 Mediator para ligação nonRT
+
+services:
+  dbaas:
+    image: "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-dbaas:${DBAAS_VER:-0.5.0}"
+    restart: unless-stopped
+
+  e2term:
+    restart: unless-stopped
+    ports:
+      - "${ORAN_E2_HOST_PORT:-36422}:36422/sctp"
+    volumes:
+      # Paths relativos ao vendor/oran-sc-ric (cwd do compose em up_oran_ric.sh)
+      - type: bind
+        source: ../../config/oran-ric/e2term.conf
+        target: /opt/e2/config/config.conf
+      - type: bind
+        source: ./ric/configs/routes.rtg
+        target: /opt/e2/dockerRouter.txt
+
+  e2mgr:
+    restart: unless-stopped
+
+  submgr:
+    restart: unless-stopped
+
+  a1mediator:
+    container_name: ric_a1mediator
+    hostname: a1mediator
+    image: "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-a1:${A1MEDIATOR_VER:-3.2.2}"
+    depends_on:
+      - dbaas
+    environment:
+      - USE_FAKE_SDL=True
+      - DBAAS_SERVICE_HOST=${DBAAS_IP:-10.0.2.12}
+      - DBAAS_PORT_6379_TCP_ADDR=${DBAAS_IP:-10.0.2.12}
+      - DBAAS_PORT_6379_TCP_PORT=${DBAAS_PORT:-6379}
+      - RMR_SEED_RT=/opt/route/a1-routes.rt
+      - RMR_SRC_ID=${A1MEDIATOR_IP:-10.0.2.16}
+    ports:
+      - "${A1MEDIATOR_HOST_PORT:-10000}:10000"
+    volumes:
+      - type: bind
+        source: ../../config/oran-ric/a1-routes.rt
+        target: /opt/route/a1-routes.rt
+    networks:
+      ric_network:
+        ipv4_address: ${A1MEDIATOR_IP:-10.0.2.16}

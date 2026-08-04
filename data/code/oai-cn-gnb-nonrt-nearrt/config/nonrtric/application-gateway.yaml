@@ -1,0 +1,26 @@
+################################################################################
+# nonRT RIC API Gateway — lab OAI (PMS only, sem ICS na Fase 1)
+################################################################################
+
+server:
+  port: 9090
+spring:
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          useInsecureTrustManager: true
+      routes:
+      - id: A1-Policy
+        uri: http://policy-agent:8081
+        predicates:
+        - Path=/a1-policy/**
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,gateway"
+logging:
+  level:
+    ROOT: ERROR
+    org.springframework.cloud.gateway: INFO
