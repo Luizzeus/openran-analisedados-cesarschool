@@ -24,7 +24,6 @@ Thumbs.db
 *.toc
 *.vrb
 *.xdv
-*.pdf
 
 # Common local environments and build outputs
 __pycache__/
