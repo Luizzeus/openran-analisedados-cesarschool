@@ -33,3 +33,10 @@ venv/
 node_modules/
 dist/
 build/
+
+# Large media (Zoom recordings etc.) - exceed GitHub's 100MB limit
+*.mp4
+*.m4a
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
